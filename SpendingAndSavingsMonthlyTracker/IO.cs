@@ -13,5 +13,20 @@ namespace SpendingAndSavingsMonthlyTracker
 
             return csvReader.GetRecords<T>().ToList();
         }
+
+        public static void WriteRecords<T>(string filePath, List<T> records)
+        {
+            var directory = Path.GetDirectoryName(filePath);
+
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory!);
+            }
+
+            using var streamWriter = new StreamWriter(filePath);
+            using var csvWriter = new CsvWriter(streamWriter, culture: CultureInfo.InvariantCulture);
+
+            csvWriter.WriteRecords(records);
+        }
     }
 }
