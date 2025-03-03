@@ -1,4 +1,5 @@
 ﻿using CommonClasses.Persistence.Models;
+using Dapper;
 using System.Data.SQLite;
 using Z.Dapper.Plus;
 
@@ -8,16 +9,18 @@ namespace CommonClasses.Persistence
     {
         public static void Save(string filePath, Structure.SpendingSavingsTracker tracker)
         {
+            CreateDatabase(filePath);
+
             using var sqlConnection = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = False; Compress = True;");
             sqlConnection.Open();
 
-            var savingsAccounts = tracker.SavingsAccounts.Select(x => new SavingsAccount() { SavingsAccountKey = x.SavingsAccountKey.ToString(), SavingsAccountName = x.SavingsAccountName, Balance = x.Balance });
-            var spendingCategories = tracker.SpendingCategories.Select(x => new SpendingCategory() { SpendingCategoryKey = x.SpendingCategoryKey.ToString(), SpendingCategoryName = x.SpendingCategoryName });
-            var reportingPeriods = tracker.ReportingPeriods.Select(x => new ReportingPeriod() { ReportingPeriodKey = x.ReportingPeriodKey, EndDate = x.EndDate.ToString("dd/MM/yyyy"), StartDate = x.StartDate.ToString("dd/MM/yyyy") });
+            var savingsAccounts = tracker.SavingsAccounts.Select(x => new SavingsAccount() { SavingsAccountKey = x.SavingsAccountKey.ToString(), SavingsAccountName = x.SavingsAccountName, Balance = x.Balance }).ToList();
+            var spendingCategories = tracker.SpendingCategories.Select(x => new SpendingCategory() { SpendingCategoryKey = x.SpendingCategoryKey.ToString(), SpendingCategoryName = x.SpendingCategoryName }).ToList();
+            var reportingPeriods = tracker.ReportingPeriods.Select(x => new ReportingPeriod() { ReportingPeriodKey = x.ReportingPeriodKey.ToString(), EndDate = x.EndDate.ToString("dd/MM/yyyy"), StartDate = x.StartDate.ToString("dd/MM/yyyy") }).ToList();
 
-            var savingCountTransactions = tracker.SavingsAccounts.SelectMany(x => x.Transactions).Select(x => new SavingsAccountTransactions() { SavingsAccountKey = x.SavingsAccount.SavingsAccountKey.ToString(), ReportingPeriodKey = x.ReportingPeriod.ReportingPeriodKey.ToString(), Change = x.Change });
-            var spending = tracker.SpendingCategories.SelectMany(x => x.Transactions).Select(x => new Spending() { SpendingPlaceKey = x.SpendingPlace.SpendingPlaceKey.ToString(), ReportingPeriodKey = x.ReportingPeriod.ReportingPeriodKey.ToString(), Amount = x.Amount, NumberOfTransactions = x.NumberOfTransactions });
-            var spendingPlaces = tracker.SpendingCategories.SelectMany(x => x.Transactions).Select(x => new SpendingPlace() { ReportingCategoryKey = x.ReportingPeriod.ReportingPeriodKey.ToString(), SpendingPlaceKey = x.SpendingPlace.SpendingPlaceKey.ToString(), SpendingPlaceName = x.SpendingPlace.SpendingPlaceName });
+            var savingCountTransactions = tracker.SavingsAccounts.SelectMany(x => x.Transactions).Select(x => new SavingsAccountTransactions() { SavingsAccountKey = x.SavingsAccount.SavingsAccountKey.ToString(), ReportingPeriodKey = x.ReportingPeriod.ReportingPeriodKey.ToString(), Change = x.Change }).ToList();
+            var spending = tracker.SpendingCategories.SelectMany(x => x.Transactions).Select(x => new Spending() { SpendingPlaceKey = x.SpendingPlace.SpendingPlaceKey.ToString(), ReportingPeriodKey = x.ReportingPeriod.ReportingPeriodKey.ToString(), Amount = x.Amount, NumberOfTransactions = x.NumberOfTransactions }).ToList();
+            var spendingPlaces = tracker.SpendingCategories.SelectMany(x => x.Transactions).Select(x => new SpendingPlace() { SpendingPlaceKey = x.SpendingPlace.SpendingPlaceKey.ToString(), SpendingPlaceName = x.SpendingPlace.SpendingPlaceName, SpendingCategoryKey = x.SpendingPlace.SpendingCategory.SpendingCategoryKey.ToString() }).ToList();
 
             DapperPlusManager.Entity<SavingsAccount>("SavingsAccount").Table("SavingsAccount").KeepIdentity(true).InsertIfNotExists(true).Identity(x => x.SavingsAccountKey);
             DapperPlusManager.Entity<SpendingCategory>("SpendingCategory").Table("SpendingCategory").KeepIdentity(true).InsertIfNotExists(true).Identity(x => x.SpendingCategoryKey);
@@ -32,6 +35,77 @@ namespace CommonClasses.Persistence
             sqlConnection.BulkInsert("SavingsAccountTransactions", savingCountTransactions);
             sqlConnection.BulkInsert("Spending", spending);
             sqlConnection.BulkInsert("SpendingPlace", spendingPlaces);
+        }
+
+        public static void CreateDatabase(string filePath)
+        {
+            SQLiteConnection.CreateFile(filePath);
+
+            using var newDb = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = True; Compress = True;");
+
+            newDb.Open();
+
+            var reportingPeriodTable = @"
+            CREATE TABLE ""ReportingPeriod"" (
+	            ""ReportingPeriodKey""	TEXT NOT NULL UNIQUE,
+	            ""StartDate""	TEXT NOT NULL,
+	            ""EndDate""	TEXT,
+	            PRIMARY KEY(""ReportingPeriodKey"")
+            );";
+
+            var spendingCategoryTable = @"
+            CREATE TABLE ""SpendingCategory"" (
+	            ""SpendingCategoryKey""	TEXT NOT NULL UNIQUE,
+	            ""SpendingCategoryName""	TEXT NOT NULL,
+	            PRIMARY KEY(""SpendingCategoryKey"")
+            );";
+
+            var savingsAccountTable = @"
+            CREATE TABLE ""SavingsAccount"" (
+	            ""SavingsAccountKey""	TEXT NOT NULL UNIQUE,
+	            ""SavingsAccountName""	TEXT NOT NULL UNIQUE,
+	            ""Balance""	REAL NOT NULL,
+	            PRIMARY KEY(""SavingsAccountKey"")
+            );";
+
+            var spendingPlaceTable = @"
+            CREATE TABLE ""SpendingPlace"" (
+	            ""SpendingPlaceKey""	TEXT NOT NULL UNIQUE,
+	            ""SpendingPlaceName""	TEXT NOT NULL,
+	            ""SpendingCategoryKey""	TEXT NOT NULL,
+	            PRIMARY KEY(""SpendingPlaceKey""),
+	            FOREIGN KEY(""SpendingCategoryKey"") REFERENCES ""SpendingCategory""(""SpendingCategoryKey"")
+            );";
+
+            var spendingTable = @"
+            CREATE TABLE ""Spending"" (
+	            ""SpendingPlaceKey""	TEXT NOT NULL,
+	            ""ReportingPeriodKey""	TEXT NOT NULL,
+	            ""Amount""	REAL NOT NULL,
+	            ""NumberOfTransactions""	INTEGER NOT NULL,
+	            PRIMARY KEY(""SpendingPlaceKey"",""ReportingPeriodKey""),
+	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey""),
+	            FOREIGN KEY(""SpendingPlaceKey"") REFERENCES ""SpendingPlace""(""SpendingPlaceKey"")
+            );";
+
+            var savingsAccountTransactionTable = @"
+            CREATE TABLE ""SavingsAccountTransactions"" (
+	            ""SavingsAccountKey""	TEXT NOT NULL,
+	            ""ReportingPeriodKey""	TEXT NOT NULL,
+	            ""Change""	REAL NOT NULL,
+	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey""),
+	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey""),
+	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey"")
+            );";
+
+            newDb.Execute(reportingPeriodTable);
+            newDb.Execute(spendingCategoryTable);
+            newDb.Execute(savingsAccountTable);
+            newDb.Execute(spendingPlaceTable);
+            newDb.Execute(spendingTable);
+            newDb.Execute(savingsAccountTransactionTable);
+
+            newDb.Shutdown();
         }
     }
 }

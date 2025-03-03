@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SpendingAndSavingsMonthlyTracker": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\spending.csv\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\savings.csv\"\r\n\"28/01/2025\"\r\n\"27/02/2025\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\jan.db\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\""
+    }
+  }
+}

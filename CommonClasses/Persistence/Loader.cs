@@ -12,7 +12,7 @@ namespace CommonClasses.Persistence
             using var sqlConnection = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = False; Compress = True;");
             sqlConnection.Open();
 
-            var reportingPeriods = sqlConnection.Query<ReportingPeriod>(FormQueryString("Student")).Select(x => new Structure.ReportingPeriod()
+            var reportingPeriods = sqlConnection.Query<ReportingPeriod>(FormQueryString("ReportingPeriod")).Select(x => new Structure.ReportingPeriod()
             {
                 ReportingPeriodKey = Guid.Parse(x.ReportingPeriodKey),
                 EndDate = DateTime.ParseExact(x.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
