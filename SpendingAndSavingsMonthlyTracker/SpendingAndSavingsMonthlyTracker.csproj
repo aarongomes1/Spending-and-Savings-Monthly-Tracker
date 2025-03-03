@@ -26,4 +26,8 @@
     <ProjectReference Include="..\CommonClasses\CommonClasses.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CommonClasses\CommonClasses.csproj" />
+  </ItemGroup>
+
 </Project>

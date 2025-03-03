@@ -161,5 +161,76 @@ namespace CommonClasses.Persistence
             newDb.ExecuteNonQuery(spendingTable);
             newDb.ExecuteNonQuery(savingsAccountTransactionTable);
         }
+
+        public static void CreateDatabase(string filePath)
+        {
+            SQLiteConnection.CreateFile(filePath);
+
+            using var newDb = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = True; Compress = True;");
+
+            newDb.Open();
+
+            var reportingPeriodTable = @"
+            CREATE TABLE ""ReportingPeriod"" (
+	            ""ReportingPeriodKey""	TEXT NOT NULL UNIQUE,
+	            ""StartDate""	TEXT NOT NULL,
+	            ""EndDate""	TEXT,
+	            PRIMARY KEY(""ReportingPeriodKey"")
+            );";
+
+            var spendingCategoryTable = @"
+            CREATE TABLE ""SpendingCategory"" (
+	            ""SpendingCategoryKey""	TEXT NOT NULL UNIQUE,
+	            ""SpendingCategoryName""	TEXT NOT NULL,
+	            PRIMARY KEY(""SpendingCategoryKey"")
+            );";
+
+            var savingsAccountTable = @"
+            CREATE TABLE ""SavingsAccount"" (
+	            ""SavingsAccountKey""	TEXT NOT NULL UNIQUE,
+	            ""SavingsAccountName""	TEXT NOT NULL UNIQUE,
+	            ""Balance""	REAL NOT NULL,
+	            PRIMARY KEY(""SavingsAccountKey"")
+            );";
+
+            var spendingPlaceTable = @"
+            CREATE TABLE ""SpendingPlace"" (
+	            ""SpendingPlaceKey""	TEXT NOT NULL UNIQUE,
+	            ""SpendingPlaceName""	TEXT NOT NULL,
+	            ""SpendingCategoryKey""	TEXT NOT NULL,
+	            PRIMARY KEY(""SpendingPlaceKey""),
+	            FOREIGN KEY(""SpendingCategoryKey"") REFERENCES ""SpendingCategory""(""SpendingCategoryKey"")
+            );";
+
+            var spendingTable = @"
+            CREATE TABLE ""Spending"" (
+	            ""SpendingPlaceKey""	TEXT NOT NULL,
+	            ""ReportingPeriodKey""	TEXT NOT NULL,
+	            ""Amount""	REAL NOT NULL,
+	            ""NumberOfTransactions""	INTEGER NOT NULL,
+	            PRIMARY KEY(""SpendingPlaceKey"",""ReportingPeriodKey""),
+	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey""),
+	            FOREIGN KEY(""SpendingPlaceKey"") REFERENCES ""SpendingPlace""(""SpendingPlaceKey"")
+            );";
+
+            var savingsAccountTransactionTable = @"
+            CREATE TABLE ""SavingsAccountTransactions"" (
+	            ""SavingsAccountKey""	TEXT NOT NULL,
+	            ""ReportingPeriodKey""	TEXT NOT NULL,
+	            ""Change""	REAL NOT NULL,
+	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey""),
+	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey""),
+	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey"")
+            );";
+
+            newDb.Execute(reportingPeriodTable);
+            newDb.Execute(spendingCategoryTable);
+            newDb.Execute(savingsAccountTable);
+            newDb.Execute(spendingPlaceTable);
+            newDb.Execute(spendingTable);
+            newDb.Execute(savingsAccountTransactionTable);
+
+            newDb.Shutdown();
+        }
     }
 }
