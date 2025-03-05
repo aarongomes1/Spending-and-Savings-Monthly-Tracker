@@ -72,7 +72,7 @@ namespace CommonClasses
             return newSpendingPlace;
         }
 
-        public SavingsAccount GetOrCreateSavingsAccount(string savingsAccountName)
+        public SavingsAccount GetOrCreateSavingsAccount(string savingsAccountName, bool isIsa)
         {
             var matchingSavingsAccount = _tracker.SavingsAccounts.SingleOrDefault(x => x.SavingsAccountName.Equals(savingsAccountName, StringComparison.OrdinalIgnoreCase));
 
@@ -84,7 +84,8 @@ namespace CommonClasses
             var newSavingsAccount = new SavingsAccount()
             {
                 SavingsAccountName = savingsAccountName,
-                Balance = 0
+                Balance = 0,
+                IsISA = isIsa,
             };
 
             _tracker.SavingsAccounts.Add(newSavingsAccount);
@@ -92,7 +93,11 @@ namespace CommonClasses
             return newSavingsAccount;
         }
 
-        public SavingsTransaction GetOrCreateSavingsTransaction(SavingsAccount savingsAccount, ReportingPeriod reportingPeriod, decimal change)
+        public SavingsTransaction GetOrCreateSavingsTransaction(SavingsAccount savingsAccount,
+            ReportingPeriod reportingPeriod,
+            decimal change,
+            DateTime transactionDate,
+            bool? countsToIsaLimit)
         {
             var existingTransaction = savingsAccount.Transactions.SingleOrDefault(x => x.ReportingPeriod.Equals(reportingPeriod));
 
@@ -105,7 +110,9 @@ namespace CommonClasses
             {
                 ReportingPeriod = reportingPeriod,
                 SavingsAccount = savingsAccount,
-                Change = change
+                Change = change,
+                TransactionDate = transactionDate,
+                CountsToISALimit = countsToIsaLimit,
             };
 
             savingsAccount.Balance += change;

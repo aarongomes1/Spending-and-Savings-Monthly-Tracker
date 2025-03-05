@@ -26,5 +26,15 @@ namespace CommonClasses.Structure
         {
             return ReportingPeriodKey.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            var startDate = StartDate.ToString("dd/MM/yyyy");
+            var endDate = EndDate.ToString("dd/MM/yyyy");
+
+            var formattedDates = $"{startDate} - {endDate}";
+
+            return formattedDates;
+        }
     }
 }

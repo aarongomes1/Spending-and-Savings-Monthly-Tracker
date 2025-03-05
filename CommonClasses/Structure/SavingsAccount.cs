@@ -7,6 +7,7 @@ namespace CommonClasses.Structure
         public required string SavingsAccountName { get; init; }
         public required decimal Balance { get; set; }
         public List<SavingsTransaction> Transactions { get; } = [];
+        public required bool IsISA { get; init; }
 
         public override bool Equals(object? obj)
         {

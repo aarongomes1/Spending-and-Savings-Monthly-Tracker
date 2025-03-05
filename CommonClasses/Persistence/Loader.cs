@@ -23,7 +23,8 @@ namespace CommonClasses.Persistence
             {
                 SavingsAccountKey = Guid.Parse(x.SavingsAccountKey),
                 SavingsAccountName = x.SavingsAccountName,
-                Balance = x.Balance
+                Balance = x.Balance,
+                IsISA = x.IsISA == 1
             }).ToList();
 
             var spendingCategories = sqlConnection.Query<SpendingCategory>(FormQueryString("SpendingCategory")).Select(x => new Structure.SpendingCategory()
@@ -60,6 +61,8 @@ namespace CommonClasses.Persistence
                     ReportingPeriod = reportingPeriod,
                     SavingsAccount = savingsAccount,
                     Change = transactionToLoad.Change,
+                    TransactionDate = DateTime.ParseExact(transactionToLoad.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                    CountsToISALimit = transactionToLoad.CountsToISALimit == 1,
                 };
 
                 savingsAccount.Transactions.Add(transaction);
