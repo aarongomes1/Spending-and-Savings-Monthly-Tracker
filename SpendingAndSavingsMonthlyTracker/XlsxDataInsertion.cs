@@ -19,9 +19,9 @@ namespace SpendingAndSavingsMonthlyTracker
                 var dataTable = new DataTable();
 
                 using (var reader = ObjectReader.Create([record]))
-                {
-                    dataTable.Load(reader);
-                }
+            {
+                dataTable.Load(reader);
+            }
 
                 worksheet.ImportDataTable(dataTable, false, nextRow, 1);
                 nextRow++;

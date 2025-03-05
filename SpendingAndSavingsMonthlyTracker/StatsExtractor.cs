@@ -10,6 +10,8 @@ namespace SpendingAndSavingsMonthlyTracker
 
         public static List<SpendingThisPeriod> GetSpendingThisPeriod(SpendingSavingsTracker tracker, ReportingPeriod currentReportingPeriod)
         {
+            var currentReportingPeriod = tracker.ReportingPeriods.OrderByDescending(x => x.EndDate).First();
+
             var spendingThisPeriod = currentReportingPeriod.SpendingTransactionsThisPeriod.Select(x =>
                 new SpendingThisPeriod()
                 {
@@ -78,9 +80,9 @@ namespace SpendingAndSavingsMonthlyTracker
                         var newestTransaction = x.OrderByDescending(x => x.TransactionDate).MaxBy(x => x.BalanceAfterTransaction)!;
 
                         return new SavingsOverTime()
-                        {
-                            ReportingPeriod = reportingPeriod.ToString(),
-                            Account = x.Key,
+                    {
+                        ReportingPeriod = reportingPeriod.ToString(),
+                        Account = x.Key,
                             AmountAdded = newestTransaction.BalanceAfterTransaction,
                         };
                     });

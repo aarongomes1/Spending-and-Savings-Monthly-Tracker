@@ -10,6 +10,7 @@ namespace CommonClasses.Structure
         public required decimal Balance { get; set; }
 
         public List<SavingsTransaction> Transactions { get; } = [];
+        public required bool IsISA { get; init; }
 
         public required bool IsISA { get; init; }
 

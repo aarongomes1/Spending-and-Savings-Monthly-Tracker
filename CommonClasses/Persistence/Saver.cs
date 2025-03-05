@@ -190,6 +190,7 @@ namespace CommonClasses.Persistence
 	            ""SavingsAccountKey""	TEXT NOT NULL UNIQUE,
 	            ""SavingsAccountName""	TEXT NOT NULL UNIQUE,
 	            ""Balance""	REAL NOT NULL,
+	            ""IsISA""	INTEGER NOT NULL,
 	            PRIMARY KEY(""SavingsAccountKey"")
             );";
 
@@ -218,10 +219,12 @@ namespace CommonClasses.Persistence
 	            ""SavingsAccountKey""	TEXT NOT NULL,
 	            ""ReportingPeriodKey""	TEXT NOT NULL,
 	            ""Change""	REAL NOT NULL,
+	            ""TransactionDate""	TEXT NOT NULL,
+                ""CountsToISALimit"" INT NULL,
 	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey""),
-	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey""),
-	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey"")
-            );";
+	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey""),
+	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey"")
+)           ;";
 
             newDb.Execute(reportingPeriodTable);
             newDb.Execute(spendingCategoryTable);
