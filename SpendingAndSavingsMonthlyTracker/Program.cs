@@ -82,8 +82,9 @@ namespace SpendingAndSavingsMonthlyTracker
             var spendingOverTime = StatsExtractor.GetSpendingOverTime(tracker);
             var spendingThisPeriod = StatsExtractor.GetSpendingThisPeriod(tracker);
             var savingsOverTime = StatsExtractor.GetSavingsOverTime(tracker);
+            var isaUsage = StatsExtractor.GetISAUsageOverTime(tracker);
 
-            XlsxDataInsertion.PopulateTemplate(templateFilePath, savingsOverTime, spendingOverTime, spendingThisPeriod, xlsxFilePath);
+            XlsxDataInsertion.PopulateTemplate(templateFilePath, savingsOverTime, spendingOverTime, spendingThisPeriod, isaUsage, xlsxFilePath);
         }
     }
 }

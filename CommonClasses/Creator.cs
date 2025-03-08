@@ -106,6 +106,9 @@ namespace CommonClasses
                 return existingTransaction;
             }
 
+            var balanceAfterTransaction = savingsAccount.Balance + change;
+            savingsAccount.Balance = balanceAfterTransaction;
+
             var newTransaction = new SavingsTransaction()
             {
                 ReportingPeriod = reportingPeriod,
@@ -113,6 +116,7 @@ namespace CommonClasses
                 Change = change,
                 TransactionDate = transactionDate,
                 CountsToISALimit = countsToIsaLimit,
+                BalanceAfterTransaction = balanceAfterTransaction
             };
 
             savingsAccount.Balance += change;

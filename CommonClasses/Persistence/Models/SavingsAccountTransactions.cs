@@ -7,5 +7,6 @@
         public required decimal Change { get; init; }
         public required string TransactionDate { get; init; }
         public int? CountsToISALimit { get; init; }
+        public required decimal BalanceAfterTransaction { get; init; }
     }
 }

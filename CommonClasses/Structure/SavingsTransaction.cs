@@ -8,5 +8,6 @@ namespace CommonClasses.Structure
         public required decimal Change {  get; init; }
         public required DateTime TransactionDate { get; init; }
         public bool? CountsToISALimit { get; init; }
+        public required decimal BalanceAfterTransaction { get; init; }
     }
 }

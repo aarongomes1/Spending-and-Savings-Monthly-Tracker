@@ -63,6 +63,7 @@ namespace CommonClasses.Persistence
                     Change = transactionToLoad.Change,
                     TransactionDate = DateTime.ParseExact(transactionToLoad.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     CountsToISALimit = transactionToLoad.CountsToISALimit == 1,
+                    BalanceAfterTransaction = transactionToLoad.BalanceAfterTransaction,
                 };
 
                 savingsAccount.Transactions.Add(transaction);
