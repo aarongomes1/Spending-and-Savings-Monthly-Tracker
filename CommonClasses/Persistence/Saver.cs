@@ -221,6 +221,7 @@ namespace CommonClasses.Persistence
 	            ""Change""	REAL NOT NULL,
 	            ""TransactionDate""	TEXT NOT NULL,
                 ""CountsToISALimit"" INT NULL,
+                ""BalanceAfterTransaction""	REAL NOT NULL,
 	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey""),
 	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey""),
 	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey"")

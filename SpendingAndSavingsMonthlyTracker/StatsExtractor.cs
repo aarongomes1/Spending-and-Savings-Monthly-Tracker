@@ -71,6 +71,8 @@ namespace SpendingAndSavingsMonthlyTracker
 
             var spendingOverTime = new List<SavingsOverTime>();
 
+            var accountTotalTracker = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+
             foreach (var reportingPeriod in reportingPeriods)
             {
                 // Summarise all transactions by savings account
@@ -95,6 +97,16 @@ namespace SpendingAndSavingsMonthlyTracker
                 {
                     Account = TOTAL_NAME,
                     AmountAdded = total,
+                    ReportingPeriod = reportingPeriod.ToString(),
+                };
+
+                spendingOverTime.Add(totalSavingsPerReportingPeriod);
+            }
+
+                var totalSavingsPerReportingPeriod = new SavingsOverTime()
+                {
+                    Account = TOTAL_NAME,
+                    AmountAdded = accountTotalTracker[TOTAL_NAME],
                     ReportingPeriod = reportingPeriod.ToString(),
                 };
 
