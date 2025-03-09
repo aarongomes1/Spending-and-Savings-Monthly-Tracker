@@ -25,6 +25,13 @@ namespace CommonClasses.Structure
             return tracker;
         }
 
+        public static SpendingSavingsTracker InitialiseEmpty()
+        {
+            var tracker = new SpendingSavingsTracker([], [], []);
+
+            return tracker;
+        }
+
         public void Save(string filePath)
         {
             Saver.Save(filePath, this);

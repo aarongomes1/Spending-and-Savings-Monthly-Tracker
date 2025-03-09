@@ -99,7 +99,9 @@ namespace CommonClasses
             DateTime transactionDate,
             bool? countsToIsaLimit)
         {
-            var existingTransaction = savingsAccount.Transactions.SingleOrDefault(x => x.ReportingPeriod.Equals(reportingPeriod));
+            var existingTransaction = savingsAccount.Transactions.SingleOrDefault(x => x.ReportingPeriod.Equals(reportingPeriod)
+            && x.Change == change
+            && x.CountsToISALimit == countsToIsaLimit);
 
             if (existingTransaction is not null)
             {
@@ -118,8 +120,6 @@ namespace CommonClasses
                 CountsToISALimit = countsToIsaLimit,
                 BalanceAfterTransaction = balanceAfterTransaction
             };
-
-            savingsAccount.Balance += change;
 
             savingsAccount.Transactions.Add(newTransaction);
             reportingPeriod.SavingsTransactionsThisPeriod.Add(newTransaction);

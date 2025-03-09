@@ -1,8 +1,9 @@
-﻿using CsvHelper;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
+using CsvHelper;
 
-namespace SpendingAndSavingsMonthlyTracker
+
+namespace SavingsInitialiser
 {
     public class IO
     {

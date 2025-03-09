@@ -32,6 +32,13 @@ namespace SpendingAndSavingsMonthlyTracker
 
             foreach(var reportingPeriod in reportingPeriods)
             {
+                // Remove the initial reporting period from spending over time
+                if (reportingPeriod.StartDate.Day == 5 && reportingPeriod.StartDate.Month == 4
+                    && reportingPeriod.EndDate.Day == 5 && reportingPeriod.EndDate.Month == 4)
+                {
+                    continue;
+                }
+
                 var transactionsThisPeriod = reportingPeriod.SpendingTransactionsThisPeriod
                     .GroupBy(x => x.SpendingPlace.SpendingCategory.SpendingCategoryName, StringComparer.OrdinalIgnoreCase)
                     .Select(x => new SpendingOverTime() {
@@ -43,7 +50,7 @@ namespace SpendingAndSavingsMonthlyTracker
                 spendingOverTime.AddRange(transactionsThisPeriod);
 
                 // Add the total of all spendind for the reporting period
-                var totalAmount = reportingPeriod.SavingsTransactionsThisPeriod.Select(x => x.Change).Sum();
+                var totalAmount = reportingPeriod.SpendingTransactionsThisPeriod.Select(x => x.Amount).Sum();
                 var totalSpendingPerReportingPeriod = new SpendingOverTime()
                 {
                     SpendingCategory = TOTAL_NAME,
@@ -63,43 +70,29 @@ namespace SpendingAndSavingsMonthlyTracker
 
             var spendingOverTime = new List<SavingsOverTime>();
 
-            var accountTotalTracker = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
-
             foreach (var reportingPeriod in reportingPeriods)
             {
                 var transactionsThisPeriod = reportingPeriod.SavingsTransactionsThisPeriod
                     .GroupBy(x => x.SavingsAccount.SavingsAccountName, StringComparer.OrdinalIgnoreCase)
                     .Select(x => {
-
-                        var amountAdded = x.Select(x => x.Change).Sum();
-
-                        if (!accountTotalTracker.TryAdd(x.Key, amountAdded))
-                        {
-                            accountTotalTracker[x.Key] += amountAdded;
-                        }
+                        var newestTransaction = x.OrderByDescending(x => x.TransactionDate).First();
 
                         return new SavingsOverTime()
                         {
                             ReportingPeriod = reportingPeriod.ToString(),
                             Account = x.Key,
-                            AmountAdded = accountTotalTracker[x.Key],
+                            AmountAdded = newestTransaction.BalanceAfterTransaction,
                         };
                     });
 
                 spendingOverTime.AddRange(transactionsThisPeriod);
 
-                // Add the total of all savings for the reporting period
-                var totalAmount = reportingPeriod.SavingsTransactionsThisPeriod.Select(x => x.Change).Sum();
-
-                if (!accountTotalTracker.TryAdd(TOTAL_NAME, totalAmount))
-                {
-                    accountTotalTracker[TOTAL_NAME] += totalAmount;
-                }
+                var total = transactionsThisPeriod.Select(x => x.AmountAdded).Sum();
 
                 var totalSavingsPerReportingPeriod = new SavingsOverTime()
                 {
                     Account = TOTAL_NAME,
-                    AmountAdded = accountTotalTracker[TOTAL_NAME],
+                    AmountAdded = total,
                     ReportingPeriod = reportingPeriod.ToString(),
                 };
 

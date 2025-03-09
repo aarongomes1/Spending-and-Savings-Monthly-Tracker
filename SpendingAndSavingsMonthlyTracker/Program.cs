@@ -45,23 +45,37 @@ namespace SpendingAndSavingsMonthlyTracker
             }
             else
             {
-                tracker = new SpendingSavingsTracker([], [], []);
+                tracker = SpendingSavingsTracker.InitialiseEmpty();
             }
 
 
             var reportingPeriod = tracker.Creator.GetOrCreateReportingPeriod(startDate, endDate);
 
-            foreach(var savingsRecord in savingsRecords)
+            var savingsAccountsUsed = new List<SavingsAccount>();
+
+            savingsRecords = savingsRecords.OrderBy(x => DateTime.ParseExact(x.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture)).ToList();
+
+            foreach (var savingsRecord in savingsRecords)
             {
                 var isIsa = !string.IsNullOrWhiteSpace(savingsRecord.IsISA) && savingsRecord.IsISA.Equals("true", StringComparison.OrdinalIgnoreCase);
 
                 var savingsAccount = tracker.Creator.GetOrCreateSavingsAccount(savingsRecord.AccountName, isIsa);
-
-                var transactionDate = DateTime.ParseExact(savingsRecord.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                savingsAccountsUsed.Add(savingsAccount);
 
                 var countsToIsaLimit = !string.IsNullOrWhiteSpace(savingsRecord.BalanceCountsToISALimit) && savingsRecord.BalanceCountsToISALimit.Equals("true", StringComparison.OrdinalIgnoreCase);
 
+                var transactionDate = DateTime.ParseExact(savingsRecord.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
                 tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, savingsRecord.Deposit, transactionDate, countsToIsaLimit);
+            }
+
+            // For the savings accounts that weren't added to set the transaction to 0
+            foreach(var savingsAccount in tracker.SavingsAccounts)
+            {
+                if (!savingsAccountsUsed.Contains(savingsAccount))
+                {
+                    tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, 0, reportingPeriod.StartDate, savingsAccount.IsISA);
+                }
             }
 
             foreach(var spendingRecord in spendingRecords)
