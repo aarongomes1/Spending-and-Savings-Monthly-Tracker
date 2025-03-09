@@ -121,8 +121,6 @@ namespace CommonClasses
                 BalanceAfterTransaction = balanceAfterTransaction
             };
 
-            savingsAccount.Balance += change;
-
             savingsAccount.Transactions.Add(newTransaction);
             reportingPeriod.SavingsTransactionsThisPeriod.Add(newTransaction);
 
