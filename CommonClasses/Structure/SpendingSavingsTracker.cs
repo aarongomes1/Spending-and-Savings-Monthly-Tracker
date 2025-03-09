@@ -35,6 +35,6 @@ namespace CommonClasses.Structure
         public void Save(string filePath)
         {
             Saver.Save(filePath, this);
-        } 
+        }
     }
 }
