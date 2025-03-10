@@ -33,8 +33,8 @@ namespace SpendingAndSavingsMonthlyTracker
             foreach(var reportingPeriod in reportingPeriods)
             {
                 // Remove the initial reporting period from spending over time
-                if (reportingPeriod.StartDate.Day == 5 && reportingPeriod.StartDate.Month == 4
-                    && reportingPeriod.EndDate.Day == 5 && reportingPeriod.EndDate.Month == 4)
+                if (reportingPeriod.StartDate.Day == 6 && reportingPeriod.StartDate.Month == 4
+                    && reportingPeriod.EndDate.Day == 6 && reportingPeriod.EndDate.Month == 4)
                 {
                     continue;
                 }
@@ -107,13 +107,13 @@ namespace SpendingAndSavingsMonthlyTracker
         {
             var mostRecentPeriod = tracker.ReportingPeriods.OrderByDescending(x => x.StartDate).First();
 
-            var startOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year}");
-            var endOfFinancialYear = DateTime.Parse($"04/04/{mostRecentPeriod.StartDate.Year + 1}");
+            var startOfFinancialYear = DateTime.Parse($"06/04/{mostRecentPeriod.StartDate.Year}");
+            var endOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year + 1}");
 
             if (startOfFinancialYear >= mostRecentPeriod.StartDate)
             {
-                startOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year - 1}");
-                endOfFinancialYear = DateTime.Parse($"04/04/{mostRecentPeriod.StartDate.Year}");
+                startOfFinancialYear = DateTime.Parse($"06/04/{mostRecentPeriod.StartDate.Year - 1}");
+                endOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year}");
             }
 
             var reportingPeriodsWithinFinancialYear = tracker.ReportingPeriods.Where(x => x.EndDate >= startOfFinancialYear && x.StartDate <= endOfFinancialYear)

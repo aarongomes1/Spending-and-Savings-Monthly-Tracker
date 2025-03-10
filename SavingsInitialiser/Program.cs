@@ -25,7 +25,7 @@ namespace SavingsInitialiser
 
             var tracker = SpendingSavingsTracker.InitialiseEmpty();
 
-            var startOfFinancialYear = DateTime.ParseExact($"05/04/{year}", "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            var startOfFinancialYear = DateTime.ParseExact($"06/04/{year}", "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
             var reportingPeriod = tracker.Creator.GetOrCreateReportingPeriod(startOfFinancialYear, startOfFinancialYear);
 
