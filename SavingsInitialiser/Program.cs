@@ -31,7 +31,7 @@ namespace SavingsInitialiser
 
             foreach(var record in savingsRecords)
             {
-                var isIsa = !string.IsNullOrWhiteSpace(record.IsISA) && record.IsISA.Equals("true", StringComparison.OrdinalIgnoreCase);
+                var isIsa = record.IsISA is not null && (bool) record.IsISA;
 
                 var savingsAccount = tracker.Creator.GetOrCreateSavingsAccount(record.AccountName, isIsa);
 
