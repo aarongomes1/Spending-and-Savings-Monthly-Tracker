@@ -39,6 +39,7 @@ namespace SpendingAndSavingsMonthlyTracker
                     continue;
                 }
 
+                // Summarise the transactions in the reporting period by spending category
                 var transactionsThisPeriod = reportingPeriod.SpendingTransactionsThisPeriod
                     .GroupBy(x => x.SpendingPlace.SpendingCategory.SpendingCategoryName, StringComparer.OrdinalIgnoreCase)
                     .Select(x => new SpendingOverTime() {
@@ -72,6 +73,7 @@ namespace SpendingAndSavingsMonthlyTracker
 
             foreach (var reportingPeriod in reportingPeriods)
             {
+                // Summarise all transactions by savings account
                 var transactionsThisPeriod = reportingPeriod.SavingsTransactionsThisPeriod
                     .GroupBy(x => x.SavingsAccount.SavingsAccountName, StringComparer.OrdinalIgnoreCase)
                     .Select(x => {

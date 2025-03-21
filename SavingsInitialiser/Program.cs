@@ -23,8 +23,10 @@ namespace SavingsInitialiser
 
             var savingsRecords = IO.ReadRecords<SavingsInput>(savingsFilePath);
 
+            // Create an empty models class
             var tracker = SpendingSavingsTracker.InitialiseEmpty();
 
+            // We'll assign any previous years contributions and ISA usage to the start of the financial year
             var startOfFinancialYear = DateTime.ParseExact($"06/04/{year}", "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
             var reportingPeriod = tracker.Creator.GetOrCreateReportingPeriod(startOfFinancialYear, startOfFinancialYear);
@@ -37,13 +39,16 @@ namespace SavingsInitialiser
 
                 var balance = record.BalanceFromPreviousYears;
 
+                // If we have some ISA usage for the year, we need subtract this off the previous year balance
                 if (record.ISAUsageUsed is not null)
                 {
                     balance -= (decimal) record.ISAUsageUsed;
                 }
 
+                // Create a transaction at the start of the financial year with the amount from previous years
                 tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, balance, startOfFinancialYear, false);
 
+                // Create an extra transaction with the ISA usage for the year
                 if (record.ISAUsageUsed is not null)
                 {
                     tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, (decimal) record.ISAUsageUsed, startOfFinancialYear, true);

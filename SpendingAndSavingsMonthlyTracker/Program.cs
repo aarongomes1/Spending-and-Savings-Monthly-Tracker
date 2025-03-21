@@ -39,6 +39,7 @@ namespace SpendingAndSavingsMonthlyTracker
 
             SpendingSavingsTracker tracker;
 
+            // If we have a previous month's run then load it in, if not then just create an empty models object
             if (!string.IsNullOrWhiteSpace(previousReportMonthFilePath))
             {
                 tracker = SpendingSavingsTracker.Load(previousReportMonthFilePath);
@@ -53,16 +54,18 @@ namespace SpendingAndSavingsMonthlyTracker
 
             var savingsAccountsUsed = new List<SavingsAccount>();
 
+            // Ordering by date allows us to calculate the balance of the savings account for each transaction
             savingsRecords = savingsRecords.OrderBy(x => DateTime.ParseExact(x.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture)).ToList();
 
             foreach (var savingsRecord in savingsRecords)
             {
-                var isIsa = !string.IsNullOrWhiteSpace(savingsRecord.IsISA) && savingsRecord.IsISA.Equals("true", StringComparison.OrdinalIgnoreCase);
+                var isIsa = savingsRecord.IsISA is not null && (bool) savingsRecord.IsISA;
 
                 var savingsAccount = tracker.Creator.GetOrCreateSavingsAccount(savingsRecord.AccountName, isIsa);
                 savingsAccountsUsed.Add(savingsAccount);
 
-                var countsToIsaLimit = !string.IsNullOrWhiteSpace(savingsRecord.BalanceCountsToISALimit) && savingsRecord.BalanceCountsToISALimit.Equals("true", StringComparison.OrdinalIgnoreCase);
+                // If the account we put money into is an ISA then we need to count this transaction towards the ISA limit
+                var countsToIsaLimit = savingsRecord.BalanceCountsToISALimit is not null && (bool) savingsRecord.BalanceCountsToISALimit;
 
                 var transactionDate = DateTime.ParseExact(savingsRecord.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
@@ -78,6 +81,7 @@ namespace SpendingAndSavingsMonthlyTracker
                 }
             }
 
+            // Zip through all the spending records and translate into the model
             foreach(var spendingRecord in spendingRecords)
             {
                 var amountChanged = spendingRecord.Debit ?? spendingRecord.Refund ?? throw new Exception("Spending record has blank amount");
@@ -91,8 +95,10 @@ namespace SpendingAndSavingsMonthlyTracker
             var dbFilePath = Path.Combine(outputFolderPath, "output.db");
             var xlsxFilePath = Path.Combine(outputFolderPath, "report.xlsx");
 
+            // Save the completed models object to the db 
             tracker.Save(dbFilePath);
 
+            // Calculate the various stats
             var spendingOverTime = StatsExtractor.GetSpendingOverTime(tracker);
             var spendingThisPeriod = StatsExtractor.GetSpendingThisPeriod(tracker);
             var savingsOverTime = StatsExtractor.GetSavingsOverTime(tracker);

@@ -3,6 +3,7 @@
     public class SpendingCategory
     {
         public Guid SpendingCategoryKey { get; init; } = Guid.NewGuid();
+
         public required string SpendingCategoryName { get; init; }
 
         public List<Spending> Transactions { get; } = [];
