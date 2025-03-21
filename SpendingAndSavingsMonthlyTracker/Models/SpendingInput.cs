@@ -5,7 +5,7 @@ namespace SpendingAndSavingsMonthlyTracker.Models
     {
         public required string Name { get; init; }
         public required string Category { get; init; }
-        public required string Debit { get; init; }
-        public required decimal Refund { get; init; }
+        public required decimal? Debit { get; init; }
+        public required decimal? Refund { get; init; }
     }
 }

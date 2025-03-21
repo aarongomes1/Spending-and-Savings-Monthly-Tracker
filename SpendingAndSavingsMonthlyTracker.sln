@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35728.132 d17.12
+VisualStudioVersion = 17.12.35728.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendingAndSavingsMonthlyTracker", "SpendingAndSavingsMonthlyTracker\SpendingAndSavingsMonthlyTracker.csproj", "{0B115991-5451-4BCF-8D44-8BE443403281}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonClasses", "CommonClasses\CommonClasses.csproj", "{847AEC4C-5A87-4601-A6D1-37458DE6E313}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavingsInitialiser", "SavingsInitialiser\SavingsInitialiser.csproj", "{7125375C-40D2-41B6-8438-858C2CB17EE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{847AEC4C-5A87-4601-A6D1-37458DE6E313}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{847AEC4C-5A87-4601-A6D1-37458DE6E313}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{847AEC4C-5A87-4601-A6D1-37458DE6E313}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7125375C-40D2-41B6-8438-858C2CB17EE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7125375C-40D2-41B6-8438-858C2CB17EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7125375C-40D2-41B6-8438-858C2CB17EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7125375C-40D2-41B6-8438-858C2CB17EE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

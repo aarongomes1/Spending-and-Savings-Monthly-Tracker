@@ -12,7 +12,7 @@ namespace CommonClasses.Persistence
             using var sqlConnection = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = False; Compress = True;");
             sqlConnection.Open();
 
-            var reportingPeriods = sqlConnection.Query<ReportingPeriod>(FormQueryString("Student")).Select(x => new Structure.ReportingPeriod()
+            var reportingPeriods = sqlConnection.Query<ReportingPeriod>(FormQueryString("ReportingPeriod")).Select(x => new Structure.ReportingPeriod()
             {
                 ReportingPeriodKey = Guid.Parse(x.ReportingPeriodKey),
                 EndDate = DateTime.ParseExact(x.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
@@ -23,7 +23,8 @@ namespace CommonClasses.Persistence
             {
                 SavingsAccountKey = Guid.Parse(x.SavingsAccountKey),
                 SavingsAccountName = x.SavingsAccountName,
-                Balance = x.Balance
+                Balance = x.Balance,
+                IsISA = x.IsISA == 1
             }).ToList();
 
             var spendingCategories = sqlConnection.Query<SpendingCategory>(FormQueryString("SpendingCategory")).Select(x => new Structure.SpendingCategory()
@@ -60,6 +61,9 @@ namespace CommonClasses.Persistence
                     ReportingPeriod = reportingPeriod,
                     SavingsAccount = savingsAccount,
                     Change = transactionToLoad.Change,
+                    TransactionDate = DateTime.ParseExact(transactionToLoad.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                    CountsToISALimit = transactionToLoad.CountsToISALimit == 1,
+                    BalanceAfterTransaction = transactionToLoad.BalanceAfterTransaction,
                 };
 
                 savingsAccount.Transactions.Add(transaction);

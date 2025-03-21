@@ -5,5 +5,6 @@
         public required string SavingsAccountKey { get; init; }
         public required string SavingsAccountName { get; init; }
         public required decimal Balance { get; init; }
+        public required int IsISA { get; init; }
     }
 }
