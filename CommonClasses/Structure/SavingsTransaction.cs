@@ -11,6 +11,7 @@ namespace CommonClasses.Structure
 
         public required DateOnly TransactionDate { get; init; }
 
+
         public bool? CountsToISALimit { get; init; }
 
         public required decimal BalanceAfterTransaction { get; init; }
