@@ -32,12 +32,9 @@ namespace CommonClasses.Structure
 
         public override string ToString()
         {
-            var startDate = StartDate.ToString("dd/MM/yyyy");
-            var endDate = EndDate.ToString("dd/MM/yyyy");
+            var formattedEndDate = EndDate.ToString("yyyy-MM-dd");
 
-            var formattedDates = $"{startDate} - {endDate}";
-
-            return formattedDates;
+            return formattedEndDate;
         }
     }
 }
