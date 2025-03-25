@@ -8,10 +8,8 @@ namespace SpendingAndSavingsMonthlyTracker
         private static readonly int NUMBER_OF_REPORTING_PERIODS = 13;
         private static readonly string TOTAL_NAME = "Total";
 
-        public static List<SpendingThisPeriod> GetSpendingThisPeriod(SpendingSavingsTracker tracker)
+        public static List<SpendingThisPeriod> GetSpendingThisPeriod(SpendingSavingsTracker tracker, ReportingPeriod currentReportingPeriod)
         {
-            var currentReportingPeriod = tracker.ReportingPeriods.OrderByDescending(x => x.EndDate).First();
-
             var spendingThisPeriod = currentReportingPeriod.SpendingTransactionsThisPeriod.Select(x =>
                 new SpendingThisPeriod()
                 {
@@ -77,7 +75,7 @@ namespace SpendingAndSavingsMonthlyTracker
                 var transactionsThisPeriod = reportingPeriod.SavingsTransactionsThisPeriod
                     .GroupBy(x => x.SavingsAccount.SavingsAccountName, StringComparer.OrdinalIgnoreCase)
                     .Select(x => {
-                        var newestTransaction = x.OrderByDescending(x => x.TransactionDate).First();
+                        var newestTransaction = x.OrderByDescending(x => x.TransactionDate).MaxBy(x => x.BalanceAfterTransaction)!;
 
                         return new SavingsOverTime()
                         {

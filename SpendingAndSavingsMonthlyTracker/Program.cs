@@ -71,7 +71,7 @@ namespace SpendingAndSavingsMonthlyTracker
 
             // Calculate the various stats
             var spendingOverTime = StatsExtractor.GetSpendingOverTime(tracker);
-            var spendingThisPeriod = StatsExtractor.GetSpendingThisPeriod(tracker);
+            var spendingThisPeriod = StatsExtractor.GetSpendingThisPeriod(tracker, matchingReportingPeriod!);
             var savingsOverTime = StatsExtractor.GetSavingsOverTime(tracker);
             var isaUsage = StatsExtractor.GetISAUsageOverTime(tracker);
 
