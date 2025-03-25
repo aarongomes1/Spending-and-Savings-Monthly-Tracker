@@ -10,8 +10,6 @@ namespace SpendingAndSavingsMonthlyTracker
 
         public static List<SpendingThisPeriod> GetSpendingThisPeriod(SpendingSavingsTracker tracker, ReportingPeriod currentReportingPeriod)
         {
-            var currentReportingPeriod = tracker.ReportingPeriods.OrderByDescending(x => x.EndDate).First();
-
             var spendingThisPeriod = currentReportingPeriod.SpendingTransactionsThisPeriod.Select(x =>
                 new SpendingThisPeriod()
                 {
