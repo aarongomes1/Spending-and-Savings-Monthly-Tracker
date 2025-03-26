@@ -107,13 +107,13 @@ namespace SpendingAndSavingsMonthlyTracker
         {
             var mostRecentPeriod = tracker.ReportingPeriods.OrderByDescending(x => x.StartDate).First();
 
-            var startOfFinancialYear = DateTime.Parse($"06/04/{mostRecentPeriod.StartDate.Year}");
-            var endOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year + 1}");
+            var startOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year, 4, 6);
+            var endOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year + 1, 4, 5);
 
             if (startOfFinancialYear >= mostRecentPeriod.StartDate)
             {
-                startOfFinancialYear = DateTime.Parse($"06/04/{mostRecentPeriod.StartDate.Year - 1}");
-                endOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year}");
+                startOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year - 1, 4, 6);
+                endOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year, 4, 5);
             }
 
             var reportingPeriodsWithinFinancialYear = tracker.ReportingPeriods.Where(x => x.EndDate >= startOfFinancialYear && x.StartDate <= endOfFinancialYear)

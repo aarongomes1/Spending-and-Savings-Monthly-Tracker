@@ -5,7 +5,7 @@ namespace SavingsInitialiser
 {
     internal class Normaliser
     {
-        public static void NormaliseSavings(SpendingSavingsTracker tracker, List<SavingsInput> savingsRecords, DateTime startOfFinancialYear)
+        public static void NormaliseSavings(SpendingSavingsTracker tracker, List<SavingsInput> savingsRecords, DateOnly startOfFinancialYear)
         {
             var reportingPeriod = tracker.Creator.GetOrCreateReportingPeriod(startOfFinancialYear, startOfFinancialYear);
 

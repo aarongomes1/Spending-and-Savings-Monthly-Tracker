@@ -9,7 +9,7 @@ namespace CommonClasses.Structure
 
         public required decimal Change {  get; init; }
 
-        public required DateTime TransactionDate { get; init; }
+        public required DateOnly TransactionDate { get; init; }
 
         public bool? CountsToISALimit { get; init; }
 

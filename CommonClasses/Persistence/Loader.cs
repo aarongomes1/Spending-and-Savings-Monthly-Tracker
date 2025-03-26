@@ -15,8 +15,8 @@ namespace CommonClasses.Persistence
             var reportingPeriods = sqlConnection.Query<ReportingPeriod>(FormQueryString("ReportingPeriod")).Select(x => new Structure.ReportingPeriod()
             {
                 ReportingPeriodKey = Guid.Parse(x.ReportingPeriodKey),
-                EndDate = DateTime.ParseExact(x.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                StartDate = DateTime.ParseExact(x.StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                EndDate = DateOnly.ParseExact(x.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                StartDate = DateOnly.ParseExact(x.StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
             }).ToList();
 
             var savingsAccounts = sqlConnection.Query<SavingsAccount>(FormQueryString("SavingsAccount")).Select(x => new Structure.SavingsAccount()
@@ -61,7 +61,7 @@ namespace CommonClasses.Persistence
                     ReportingPeriod = reportingPeriod,
                     SavingsAccount = savingsAccount,
                     Change = transactionToLoad.Change,
-                    TransactionDate = DateTime.ParseExact(transactionToLoad.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                    TransactionDate = DateOnly.ParseExact(transactionToLoad.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     CountsToISALimit = transactionToLoad.CountsToISALimit == 1,
                     BalanceAfterTransaction = transactionToLoad.BalanceAfterTransaction,
                 };

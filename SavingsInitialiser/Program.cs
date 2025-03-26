@@ -21,7 +21,7 @@ namespace SavingsInitialiser
             }
 
             var savingsFilePath = args[0];
-            var year = args[1];
+            var year = int.Parse(args[1]);
             var currentMonthFolderPath = args[2];
             var historyFolderPath = args[3];
 
@@ -31,7 +31,7 @@ namespace SavingsInitialiser
             var tracker = SpendingSavingsTracker.InitialiseEmpty();
 
             // We'll assign any previous years contributions and ISA usage to the start of the financial year
-            var startOfFinancialYear = DateTime.ParseExact($"06/04/{year}", "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            var startOfFinancialYear = new DateOnly(year, 4, 6);
 
             Normaliser.NormaliseSavings(tracker, savingsRecords, startOfFinancialYear);
 
@@ -41,7 +41,7 @@ namespace SavingsInitialiser
             CopyFileToHistory(outputDbFilePath, historyFolderPath, startOfFinancialYear);
         }
 
-        private static void CopyFileToHistory(string filePath, string historyFolderPath, DateTime date)
+        private static void CopyFileToHistory(string filePath, string historyFolderPath, DateOnly date)
         {
             var fileToCopy = Path.GetFileName(filePath);
 

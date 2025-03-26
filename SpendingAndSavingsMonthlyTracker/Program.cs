@@ -28,8 +28,8 @@ namespace SpendingAndSavingsMonthlyTracker
 
             var spendingFilePath = args[0];
             var savingsFilePath = args[1];
-            var startDate = DateTime.ParseExact(args[2], "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            var endDate = DateTime.ParseExact(args[3], "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            var startDate = DateOnly.ParseExact(args[2], "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            var endDate = DateOnly.ParseExact(args[3], "dd/MM/yyyy", CultureInfo.InvariantCulture);
             var configFolderPath = args[4];
             var currentReportFolderPath = args[5];
             var historyFolderPath = args[6];
@@ -63,6 +63,8 @@ namespace SpendingAndSavingsMonthlyTracker
 
             Normaliser.Normalise(tracker, savingsRecords, spendingRecords, startDate, endDate);
 
+            matchingReportingPeriod = tracker.ReportingPeriods.Single(x => x.StartDate == startDate && x.EndDate == endDate);
+
             var dbFilePath = Path.Combine(currentReportFolderPath, DB_FILE);
             var xlsxFilePath = Path.Combine(currentReportFolderPath, REPORT_FILE);
 
@@ -85,7 +87,7 @@ namespace SpendingAndSavingsMonthlyTracker
             CopyFileToHistory(xlsxFilePath, historyFolderPath, endDate);
         }
 
-        private static void CopyFileToHistory(string filePath, string historyFolderPath, DateTime date)
+        private static void CopyFileToHistory(string filePath, string historyFolderPath, DateOnly date)
         {
             var fileToCopy = Path.GetFileName(filePath);
             

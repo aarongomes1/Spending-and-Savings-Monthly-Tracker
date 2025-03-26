@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonClasses", "CommonClas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavingsInitialiser", "SavingsInitialiser\SavingsInitialiser.csproj", "{7125375C-40D2-41B6-8438-858C2CB17EE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendingAndSavingsMonthlyTrackerTests", "SpendingAndSavingsMonthlyTrackerTests\SpendingAndSavingsMonthlyTrackerTests.csproj", "{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7125375C-40D2-41B6-8438-858C2CB17EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7125375C-40D2-41B6-8438-858C2CB17EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7125375C-40D2-41B6-8438-858C2CB17EE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

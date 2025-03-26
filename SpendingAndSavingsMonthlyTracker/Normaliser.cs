@@ -11,8 +11,8 @@ namespace SpendingAndSavingsMonthlyTracker
             SpendingSavingsTracker tracker,
             List<SavingsInput> savingsRecords,
             List<SpendingInput> spendingRecords,
-            DateTime startDate,
-            DateTime endDate)
+            DateOnly startDate,
+            DateOnly endDate)
         {
             var reportingPeriod = tracker.Creator.GetOrCreateReportingPeriod(startDate, endDate);
 
@@ -27,7 +27,7 @@ namespace SpendingAndSavingsMonthlyTracker
             var savingsAccountsUsed = new List<SavingsAccount>();
 
             // Ordering by date allows us to calculate the balance of the savings account for each transaction
-            savingsRecords = savingsRecords.OrderBy(x => DateTime.ParseExact(x.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture)).ToList();
+            savingsRecords = savingsRecords.OrderBy(x => DateOnly.ParseExact(x.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture)).ToList();
 
             foreach (var savingsRecord in savingsRecords)
             {
@@ -39,7 +39,7 @@ namespace SpendingAndSavingsMonthlyTracker
                 // If the account we put money into is an ISA then we need to count this transaction towards the ISA limit
                 var countsToIsaLimit = savingsRecord.BalanceCountsToISALimit is not null && (bool)savingsRecord.BalanceCountsToISALimit;
 
-                var transactionDate = DateTime.ParseExact(savingsRecord.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                var transactionDate = DateOnly.ParseExact(savingsRecord.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                 tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, savingsRecord.Deposit, transactionDate, countsToIsaLimit);
             }
