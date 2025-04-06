@@ -1,6 +1,6 @@
 ﻿using CommonClasses.Persistence.Models;
 using Dapper;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 namespace CommonClasses.Persistence
@@ -9,7 +9,7 @@ namespace CommonClasses.Persistence
     {
         public static Structure.SpendingSavingsTracker Load(string filePath)
         {
-            using var sqlConnection = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = False; Compress = True;");
+            using var sqlConnection = new SqliteConnection($"Data Source={filePath};");
             sqlConnection.Open();
 
             var reportingPeriods = sqlConnection.Query<ReportingPeriod>(FormQueryString("ReportingPeriod")).Select(x => new Structure.ReportingPeriod()

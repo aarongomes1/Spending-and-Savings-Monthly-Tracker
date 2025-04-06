@@ -1,6 +1,6 @@
 ﻿using CommonClasses.Persistence.Models;
 using Dapper;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Z.Dapper.Plus;
 
 namespace CommonClasses.Persistence
@@ -11,7 +11,7 @@ namespace CommonClasses.Persistence
         {
             CreateDatabase(filePath);
 
-            using var sqlConnection = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = False; Compress = True;");
+            using var sqlConnection = new SqliteConnection($"Data Source={filePath};");
             sqlConnection.Open();
 
             var savingsAccounts = tracker.SavingsAccounts
@@ -70,21 +70,20 @@ namespace CommonClasses.Persistence
             sqlConnection.BulkInsert("SavingsAccount", savingsAccounts);
             sqlConnection.BulkInsert("SpendingCategory", spendingCategories);
             sqlConnection.BulkInsert("ReportingPeriod", reportingPeriods);
+            sqlConnection.BulkInsert("SpendingPlace", spendingPlaces);
             sqlConnection.BulkInsert("SavingsAccountTransactions", savingCountTransactions);
             sqlConnection.BulkInsert("Spending", spending);
-            sqlConnection.BulkInsert("SpendingPlace", spendingPlaces);
+            
         }
 
         public static void CreateDatabase(string filePath)
         {
-            SQLiteConnection.CreateFile(filePath);
-
-            using var newDb = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = True; Compress = True;");
+            using var newDb = new SqliteConnection($"Data Source={filePath};");
 
             newDb.Open();
 
             var reportingPeriodTable = @"
-            CREATE TABLE ""ReportingPeriod"" (
+            CREATE TABLE IF NOT EXISTS ""ReportingPeriod"" (
 	            ""ReportingPeriodKey""	TEXT NOT NULL UNIQUE,
 	            ""StartDate""	TEXT NOT NULL,
 	            ""EndDate""	TEXT,
@@ -92,14 +91,14 @@ namespace CommonClasses.Persistence
             );";
 
             var spendingCategoryTable = @"
-            CREATE TABLE ""SpendingCategory"" (
+            CREATE TABLE IF NOT EXISTS ""SpendingCategory"" (
 	            ""SpendingCategoryKey""	TEXT NOT NULL UNIQUE,
 	            ""SpendingCategoryName""	TEXT NOT NULL,
 	            PRIMARY KEY(""SpendingCategoryKey"")
             );";
 
             var savingsAccountTable = @"
-            CREATE TABLE ""SavingsAccount"" (
+            CREATE TABLE IF NOT EXISTS ""SavingsAccount"" (
 	            ""SavingsAccountKey""	TEXT NOT NULL UNIQUE,
 	            ""SavingsAccountName""	TEXT NOT NULL UNIQUE,
 	            ""Balance""	REAL NOT NULL,
@@ -108,7 +107,7 @@ namespace CommonClasses.Persistence
             );";
 
             var spendingPlaceTable = @"
-            CREATE TABLE ""SpendingPlace"" (
+            CREATE TABLE IF NOT EXISTS ""SpendingPlace"" (
 	            ""SpendingPlaceKey""	TEXT NOT NULL UNIQUE,
 	            ""SpendingPlaceName""	TEXT NOT NULL,
 	            ""SpendingCategoryKey""	TEXT NOT NULL,
@@ -117,7 +116,7 @@ namespace CommonClasses.Persistence
             );";
 
             var spendingTable = @"
-            CREATE TABLE ""Spending"" (
+            CREATE TABLE IF NOT EXISTS ""Spending"" (
 	            ""SpendingPlaceKey""	TEXT NOT NULL,
 	            ""ReportingPeriodKey""	TEXT NOT NULL,
 	            ""Amount""	REAL NOT NULL,
@@ -128,7 +127,7 @@ namespace CommonClasses.Persistence
             );";
 
             var savingsAccountTransactionTable = @"
-            CREATE TABLE ""SavingsAccountTransactions"" (
+            CREATE TABLE IF NOT EXISTS ""SavingsAccountTransactions"" (
 	            ""SavingsAccountKey""	TEXT NOT NULL,
 	            ""ReportingPeriodKey""	TEXT NOT NULL,
 	            ""Change""	REAL NOT NULL,
@@ -146,8 +145,6 @@ namespace CommonClasses.Persistence
             newDb.Execute(spendingPlaceTable);
             newDb.Execute(spendingTable);
             newDb.Execute(savingsAccountTransactionTable);
-
-            newDb.Shutdown();
         }
     }
 }
