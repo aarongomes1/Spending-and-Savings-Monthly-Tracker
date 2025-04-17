@@ -1,6 +1,6 @@
 ﻿using CommonClasses.Persistence.Models;
-using Dapper;
 using Microsoft.Data.Sqlite;
+using RepoDb;
 using System.Globalization;
 
 namespace CommonClasses.Persistence
@@ -9,6 +9,8 @@ namespace CommonClasses.Persistence
     {
         public static Structure.SpendingSavingsTracker Load(string filePath)
         {
+            GlobalConfiguration.Setup().UseSqlite();
+
             using var sqlConnection = new SqliteConnection($"Data Source={filePath};");
             sqlConnection.Open();
 
