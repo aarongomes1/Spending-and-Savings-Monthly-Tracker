@@ -225,12 +225,12 @@ namespace CommonClasses.Persistence
 	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey"")
 )           ;";
 
-            newDb.Execute(reportingPeriodTable);
-            newDb.Execute(spendingCategoryTable);
-            newDb.Execute(savingsAccountTable);
-            newDb.Execute(spendingPlaceTable);
-            newDb.Execute(spendingTable);
-            newDb.Execute(savingsAccountTransactionTable);
+            newDb.ExecuteNonQuery(reportingPeriodTable);
+            newDb.ExecuteNonQuery(spendingCategoryTable);
+            newDb.ExecuteNonQuery(savingsAccountTable);
+            newDb.ExecuteNonQuery(spendingPlaceTable);
+            newDb.ExecuteNonQuery(spendingTable);
+            newDb.ExecuteNonQuery(savingsAccountTransactionTable);
         }
     }
 }
