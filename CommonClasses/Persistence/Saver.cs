@@ -89,6 +89,8 @@ namespace CommonClasses.Persistence
             }
 
             connection.ExecuteNonQuery("PRAGMA foreign_keys = ON;");
+
+            connection.Close();
         }
 
         public static void CreateDatabase(string filePath)
@@ -149,7 +151,7 @@ namespace CommonClasses.Persistence
 	            ""TransactionDate""	TEXT NOT NULL,
                 ""CountsToISALimit"" INT NULL,
                 ""BalanceAfterTransaction""	REAL NOT NULL,
-	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey"", ""CountsToISALimit""),
+	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey"", ""CountsToISALimit"", ""TransactionDate""),
 	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey""),
 	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey"")
 )           ;";
