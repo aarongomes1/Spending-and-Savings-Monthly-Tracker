@@ -89,8 +89,6 @@ namespace CommonClasses.Persistence
             }
 
             connection.ExecuteNonQuery("PRAGMA foreign_keys = ON;");
-
-            connection.Close();
         }
 
         public static void CreateDatabase(string filePath)
