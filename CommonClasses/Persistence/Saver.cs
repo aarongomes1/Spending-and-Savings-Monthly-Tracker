@@ -60,7 +60,7 @@ namespace CommonClasses.Persistence
                     SpendingPlaceKey = x.SpendingPlace.SpendingPlaceKey.ToString(),
                     SpendingPlaceName = x.SpendingPlace.SpendingPlaceName,
                     SpendingCategoryKey = x.SpendingPlace.SpendingCategory.SpendingCategoryKey.ToString()
-                }).ToList();
+                }).DistinctBy(x => x.SpendingPlaceKey).ToList();
 
             sqlConnection.InsertAll("SavingsAccount", savingsAccounts);
             sqlConnection.InsertAll("SpendingCategory", spendingCategories);
