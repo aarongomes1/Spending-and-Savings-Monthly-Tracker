@@ -125,7 +125,12 @@ namespace SpendingAndSavingsMonthlyTracker
 
             foreach(var reportingPeriod in reportingPeriodsWithinFinancialYear)
             {
-                var transactionsForReportingPeriod = reportingPeriod.SavingsTransactionsThisPeriod.Where(x => x.CountsToISALimit is not null && (bool) x.CountsToISALimit).ToList();
+                var transactionsForReportingPeriod = reportingPeriod.SavingsTransactionsThisPeriod.Where(x => 
+                x.CountsToISALimit is not null &&
+                x.TransactionDate >= startOfFinancialYear &&
+                x.TransactionDate <= endOfFinancialYear &&
+                (bool) x.CountsToISALimit).ToList();
+
                 var totalForTheMonth = transactionsForReportingPeriod.Select(x => Math.Abs(x.Change)).Sum();
 
                 totalIsaUsage += totalForTheMonth;
