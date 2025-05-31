@@ -1,6 +1,6 @@
 ﻿using CommonClasses.Persistence.Models;
-using Dapper;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
+using RepoDb;
 using System.Globalization;
 
 namespace CommonClasses.Persistence
@@ -9,17 +9,19 @@ namespace CommonClasses.Persistence
     {
         public static Structure.SpendingSavingsTracker Load(string filePath)
         {
-            using var sqlConnection = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = False; Compress = True;");
+            GlobalConfiguration.Setup().UseSqlite();
+
+            using var sqlConnection = new SqliteConnection($"Data Source={filePath};");
             sqlConnection.Open();
 
-            var reportingPeriods = sqlConnection.Query<ReportingPeriod>(FormQueryString("ReportingPeriod")).Select(x => new Structure.ReportingPeriod()
+            var reportingPeriods = sqlConnection.ExecuteQuery<ReportingPeriod>(FormExecuteQueryString("ReportingPeriod")).Select(x => new Structure.ReportingPeriod()
             {
                 ReportingPeriodKey = Guid.Parse(x.ReportingPeriodKey),
-                EndDate = DateTime.ParseExact(x.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
-                StartDate = DateTime.ParseExact(x.StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                EndDate = DateOnly.ParseExact(x.EndDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                StartDate = DateOnly.ParseExact(x.StartDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
             }).ToList();
 
-            var savingsAccounts = sqlConnection.Query<SavingsAccount>(FormQueryString("SavingsAccount")).Select(x => new Structure.SavingsAccount()
+            var savingsAccounts = sqlConnection.ExecuteQuery<SavingsAccount>(FormExecuteQueryString("SavingsAccount")).Select(x => new Structure.SavingsAccount()
             {
                 SavingsAccountKey = Guid.Parse(x.SavingsAccountKey),
                 SavingsAccountName = x.SavingsAccountName,
@@ -27,15 +29,15 @@ namespace CommonClasses.Persistence
                 IsISA = x.IsISA == 1
             }).ToList();
 
-            var spendingCategories = sqlConnection.Query<SpendingCategory>(FormQueryString("SpendingCategory")).Select(x => new Structure.SpendingCategory()
+            var spendingCategories = sqlConnection.ExecuteQuery<SpendingCategory>(FormExecuteQueryString("SpendingCategory")).Select(x => new Structure.SpendingCategory()
             {
                 SpendingCategoryKey = Guid.Parse(x.SpendingCategoryKey),
                 SpendingCategoryName = x.SpendingCategoryName,
             }).ToList();
 
-            var spendingPlaces = sqlConnection.Query<SpendingPlace>(FormQueryString("SpendingPlace")).ToList();
-            var spending = sqlConnection.Query<Spending>(FormQueryString("Spending")).ToList();
-            var savingAccountTransactions = sqlConnection.Query<SavingsAccountTransactions>(FormQueryString("SavingsAccountTransactions")).ToList();
+            var spendingPlaces = sqlConnection.ExecuteQuery<SpendingPlace>(FormExecuteQueryString("SpendingPlace")).ToList();
+            var spending = sqlConnection.ExecuteQuery<Spending>(FormExecuteQueryString("Spending")).ToList();
+            var savingAccountTransactions = sqlConnection.ExecuteQuery<SavingsAccountTransactions>(FormExecuteQueryString("SavingsAccountTransactions")).ToList();
 
             var spendPlaces = CreateSpendingPlacesTransactionsRelationship(spendingCategories, spendingPlaces);
             CreateSpendingRelationship(spendingCategories, spendPlaces, reportingPeriods, spending);
@@ -61,7 +63,7 @@ namespace CommonClasses.Persistence
                     ReportingPeriod = reportingPeriod,
                     SavingsAccount = savingsAccount,
                     Change = transactionToLoad.Change,
-                    TransactionDate = DateTime.ParseExact(transactionToLoad.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
+                    TransactionDate = DateOnly.ParseExact(transactionToLoad.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture),
                     CountsToISALimit = transactionToLoad.CountsToISALimit == 1,
                     BalanceAfterTransaction = transactionToLoad.BalanceAfterTransaction,
                 };
@@ -118,10 +120,10 @@ namespace CommonClasses.Persistence
             return spendingPlaces;
         }
 
-        private static string FormQueryString(string tableName)
+        private static string FormExecuteQueryString(string tableName)
         {
-            var query = $"SELECT * FROM {tableName}";
-            return query;
+            var ExecuteQuery = $"SELECT * FROM {tableName}";
+            return ExecuteQuery;
         }
     }
 }

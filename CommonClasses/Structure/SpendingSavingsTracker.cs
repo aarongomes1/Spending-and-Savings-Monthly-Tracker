@@ -5,7 +5,9 @@ namespace CommonClasses.Structure
     public class SpendingSavingsTracker
     {
         public List<SavingsAccount> SavingsAccounts { get; init; }
+
         public List<SpendingCategory> SpendingCategories { get; init; }
+
         public List<ReportingPeriod> ReportingPeriods { get; init; }
 
         public readonly Creator Creator;
@@ -16,6 +18,7 @@ namespace CommonClasses.Structure
             ReportingPeriods = reportingPeriods;
             SpendingCategories = spendingCategories;
 
+            // Create objects on this object
             Creator = new Creator(this);
         }
 

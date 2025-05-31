@@ -6,51 +6,58 @@ namespace SavingsInitialiser
 {
     internal class Program
     {
+        private const string DB_FILE = "output_db.db";
+
         static void Main(string[] args)
         {
-            if (args.Length != 3)
+            if (args.Length != 4)
             {
-                Console.WriteLine("Expected 3 parameters");
+                Console.WriteLine("Expected 4 parameters");
                 Console.WriteLine("1) Path to the saving CSV file");
                 Console.WriteLine("2) Financial year start date year (eg 2024)");
-                Console.WriteLine("3) Path to the output db path");
+                Console.WriteLine("3) Path to the current month folder");
+                Console.WriteLine("3) Path to the history folder");
                 return;
             }
 
             var savingsFilePath = args[0];
-            var year = args[1];
-            var outputDbFilePath = args[2];
+            var year = int.Parse(args[1]);
+            var currentMonthFolderPath = args[2];
+            var historyFolderPath = args[3];
 
             var savingsRecords = IO.ReadRecords<SavingsInput>(savingsFilePath);
 
+            // Create an empty models class
             var tracker = SpendingSavingsTracker.InitialiseEmpty();
 
-            var startOfFinancialYear = DateTime.ParseExact($"06/04/{year}", "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            // We'll assign any previous years contributions and ISA usage to the start of the financial year
+            var startOfFinancialYear = new DateOnly(year, 4, 6);
 
-            var reportingPeriod = tracker.Creator.GetOrCreateReportingPeriod(startOfFinancialYear, startOfFinancialYear);
+            Normaliser.NormaliseSavings(tracker, savingsRecords, startOfFinancialYear);
 
-            foreach(var record in savingsRecords)
+            var outputDbFilePath = Path.Combine(currentMonthFolderPath, DB_FILE);
+            tracker.Save(outputDbFilePath);
+
+            CopyFileToHistory(outputDbFilePath, historyFolderPath, startOfFinancialYear);
+        }
+
+        private static void CopyFileToHistory(string filePath, string historyFolderPath, DateOnly date)
+        {
+            var fileToCopy = Path.GetFileName(filePath);
+
+            var year = date.ToString("yyyy");
+            var yearMonth = date.ToString("yyyyMM");
+            var formattedDate = date.ToString("yyyyMMdd");
+
+            var outputFilePath = Path.Combine(historyFolderPath, year, yearMonth, formattedDate, fileToCopy);
+
+            var directory = Path.GetDirectoryName(outputFilePath)!;
+            if (!Path.Exists(directory))
             {
-                var isIsa = record.IsISA is not null && (bool) record.IsISA;
-
-                var savingsAccount = tracker.Creator.GetOrCreateSavingsAccount(record.AccountName, isIsa);
-
-                var balance = record.BalanceFromPreviousYears;
-
-                if (record.ISAUsageUsed is not null)
-                {
-                    balance -= (decimal) record.ISAUsageUsed;
-                }
-
-                tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, balance, startOfFinancialYear, false);
-
-                if (record.ISAUsageUsed is not null)
-                {
-                    tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, (decimal) record.ISAUsageUsed, startOfFinancialYear, true);
-                }
+                Directory.CreateDirectory(directory);
             }
 
-            tracker.Save(outputDbFilePath);
+            File.Copy(filePath, outputFilePath, true);
         }
     }
 }

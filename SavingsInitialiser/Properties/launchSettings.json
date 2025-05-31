@@ -2,7 +2,7 @@
   "profiles": {
     "SavingsInitialiser": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Initial\\initialSavings.csv\"\r\n\r\n\"2024\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Initial\\initial.db\""
+      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\\initialSavings.csv\"\r\n\r\n\"2024\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\History\""
     }
   }
 }

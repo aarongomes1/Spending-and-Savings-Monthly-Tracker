@@ -4,13 +4,17 @@
       "commandName": "WSL2",
       "distributionName": ""
     },
+    "April 2025": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\CurrentMonth\\spending.csv\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\CurrentMonth\\savings.csv\"\r\n\r\n\"28/03/2025\"\r\n\r\n\"27/04/2025\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\Config\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\CurrentMonth\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\History\""
+    },
+    "Feb 2025": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\\spending.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\\savings.csv\"\r\n\r\n\"28/01/2025\"\r\n\r\n\"27/02/2025\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\Config\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\History\""
+    },
     "Jan 2025": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Jan 2025\\spending.csv\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Jan 2025\\savings.csv\"\r\n\"28/01/2025\"\r\n\"27/02/2025\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\template.xlsx\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Dec 2024\\output\\output.db\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\license.txt\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Jan 2025\\output\""
-    },
-    "Dec 2024": {
-      "commandName": "Project",
-      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Dec 2024\\spending.csv\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Dec 2024\\savings.csv\"\r\n\"27/12/2024\"\r\n\"27/01/2025\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\template.xlsx\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Initial\\initial.db\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\license.txt\"\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\real data\\cleaned\\Dec 2024\\output\""
+      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\\spending.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\\savings.csv\"\r\n\r\n\"27/12/2024\"\r\n\r\n\"27/01/2025\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\Config\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\History\""
     }
   }
 }

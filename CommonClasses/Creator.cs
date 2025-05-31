@@ -12,7 +12,7 @@ namespace CommonClasses
             _tracker = tracker;
         }
 
-        public ReportingPeriod GetOrCreateReportingPeriod(DateTime startDate, DateTime endDate)
+        public ReportingPeriod GetOrCreateReportingPeriod(DateOnly startDate, DateOnly endDate)
         {
             var matchingReportingPeriod = _tracker.ReportingPeriods.SingleOrDefault(x => x.StartDate.Equals(startDate) && x.EndDate.Equals(endDate));
 
@@ -96,7 +96,7 @@ namespace CommonClasses
         public SavingsTransaction GetOrCreateSavingsTransaction(SavingsAccount savingsAccount,
             ReportingPeriod reportingPeriod,
             decimal change,
-            DateTime transactionDate,
+            DateOnly transactionDate,
             bool? countsToIsaLimit)
         {
             var existingTransaction = savingsAccount.Transactions.SingleOrDefault(x => x.ReportingPeriod.Equals(reportingPeriod)

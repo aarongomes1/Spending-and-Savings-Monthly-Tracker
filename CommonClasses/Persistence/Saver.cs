@@ -1,7 +1,6 @@
 ﻿using CommonClasses.Persistence.Models;
-using Dapper;
-using System.Data.SQLite;
-using Z.Dapper.Plus;
+using Microsoft.Data.Sqlite;
+using RepoDb;
 
 namespace CommonClasses.Persistence
 {
@@ -9,9 +8,12 @@ namespace CommonClasses.Persistence
     {
         public static void Save(string filePath, Structure.SpendingSavingsTracker tracker)
         {
+            GlobalConfiguration.Setup().UseSqlite();
+
+            ResetDb(filePath);
             CreateDatabase(filePath);
 
-            using var sqlConnection = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = False; Compress = True;");
+            using var sqlConnection = new SqliteConnection($"Data Source={filePath};");
             sqlConnection.Open();
 
             var savingsAccounts = tracker.SavingsAccounts
@@ -58,33 +60,45 @@ namespace CommonClasses.Persistence
                     SpendingPlaceKey = x.SpendingPlace.SpendingPlaceKey.ToString(),
                     SpendingPlaceName = x.SpendingPlace.SpendingPlaceName,
                     SpendingCategoryKey = x.SpendingPlace.SpendingCategory.SpendingCategoryKey.ToString()
-                }).ToList();
+                }).DistinctBy(x => x.SpendingPlaceKey).ToList();
 
-            DapperPlusManager.Entity<SavingsAccount>("SavingsAccount").Table("SavingsAccount").KeepIdentity(true).InsertIfNotExists(true).Identity(x => x.SavingsAccountKey);
-            DapperPlusManager.Entity<SpendingCategory>("SpendingCategory").Table("SpendingCategory").KeepIdentity(true).InsertIfNotExists(true).Identity(x => x.SpendingCategoryKey);
-            DapperPlusManager.Entity<ReportingPeriod>("ReportingPeriod").Table("ReportingPeriod").KeepIdentity(true).InsertIfNotExists(true).Identity(x => x.ReportingPeriodKey);
-            DapperPlusManager.Entity<SavingsAccountTransactions>("SavingsAccountTransactions").Table("SavingsAccountTransactions").KeepIdentity(true).InsertIfNotExists(true);
-            DapperPlusManager.Entity<Spending>("Spending").Table("Spending").KeepIdentity(true).InsertIfNotExists(true);
-            DapperPlusManager.Entity<SpendingPlace>("SpendingPlace").Table("SpendingPlace").KeepIdentity(true).InsertIfNotExists(true).Identity(x => x.SpendingPlaceKey);
+            sqlConnection.InsertAll("SavingsAccount", savingsAccounts);
+            sqlConnection.InsertAll("SpendingCategory", spendingCategories);
+            sqlConnection.InsertAll("ReportingPeriod", reportingPeriods);
+            sqlConnection.InsertAll("SpendingPlace", spendingPlaces);
+            sqlConnection.InsertAll("SavingsAccountTransactions", savingCountTransactions);
+            sqlConnection.InsertAll("Spending", spending);   
+        }
 
-            sqlConnection.BulkInsert("SavingsAccount", savingsAccounts);
-            sqlConnection.BulkInsert("SpendingCategory", spendingCategories);
-            sqlConnection.BulkInsert("ReportingPeriod", reportingPeriods);
-            sqlConnection.BulkInsert("SavingsAccountTransactions", savingCountTransactions);
-            sqlConnection.BulkInsert("Spending", spending);
-            sqlConnection.BulkInsert("SpendingPlace", spendingPlaces);
+        // Reset the db so we can recreate it
+        // This allows us to 'start afresh' and not take any baggage any previous runs might have left
+        private static void ResetDb(string filePath)
+        {
+            using var connection = new SqliteConnection($"Data Source={filePath};");
+            connection.Open();
+
+            var tableNames = connection.ExecuteQuery<string>(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';"
+            ).ToList();
+
+            connection.ExecuteNonQuery("PRAGMA foreign_keys = OFF;");
+
+            foreach (var table in tableNames)
+            {
+                connection.ExecuteNonQuery($"DELETE FROM [{table}];");
+            }
+
+            connection.ExecuteNonQuery("PRAGMA foreign_keys = ON;");
         }
 
         public static void CreateDatabase(string filePath)
         {
-            SQLiteConnection.CreateFile(filePath);
-
-            using var newDb = new SQLiteConnection($"Data Source={filePath}; Version = 3; New = True; Compress = True;");
+            using var newDb = new SqliteConnection($"Data Source={filePath};");
 
             newDb.Open();
 
             var reportingPeriodTable = @"
-            CREATE TABLE ""ReportingPeriod"" (
+            CREATE TABLE IF NOT EXISTS ""ReportingPeriod"" (
 	            ""ReportingPeriodKey""	TEXT NOT NULL UNIQUE,
 	            ""StartDate""	TEXT NOT NULL,
 	            ""EndDate""	TEXT,
@@ -92,14 +106,14 @@ namespace CommonClasses.Persistence
             );";
 
             var spendingCategoryTable = @"
-            CREATE TABLE ""SpendingCategory"" (
+            CREATE TABLE IF NOT EXISTS ""SpendingCategory"" (
 	            ""SpendingCategoryKey""	TEXT NOT NULL UNIQUE,
 	            ""SpendingCategoryName""	TEXT NOT NULL,
 	            PRIMARY KEY(""SpendingCategoryKey"")
             );";
 
             var savingsAccountTable = @"
-            CREATE TABLE ""SavingsAccount"" (
+            CREATE TABLE IF NOT EXISTS ""SavingsAccount"" (
 	            ""SavingsAccountKey""	TEXT NOT NULL UNIQUE,
 	            ""SavingsAccountName""	TEXT NOT NULL UNIQUE,
 	            ""Balance""	REAL NOT NULL,
@@ -108,7 +122,7 @@ namespace CommonClasses.Persistence
             );";
 
             var spendingPlaceTable = @"
-            CREATE TABLE ""SpendingPlace"" (
+            CREATE TABLE IF NOT EXISTS ""SpendingPlace"" (
 	            ""SpendingPlaceKey""	TEXT NOT NULL UNIQUE,
 	            ""SpendingPlaceName""	TEXT NOT NULL,
 	            ""SpendingCategoryKey""	TEXT NOT NULL,
@@ -117,7 +131,7 @@ namespace CommonClasses.Persistence
             );";
 
             var spendingTable = @"
-            CREATE TABLE ""Spending"" (
+            CREATE TABLE IF NOT EXISTS ""Spending"" (
 	            ""SpendingPlaceKey""	TEXT NOT NULL,
 	            ""ReportingPeriodKey""	TEXT NOT NULL,
 	            ""Amount""	REAL NOT NULL,
@@ -128,26 +142,24 @@ namespace CommonClasses.Persistence
             );";
 
             var savingsAccountTransactionTable = @"
-            CREATE TABLE ""SavingsAccountTransactions"" (
+            CREATE TABLE IF NOT EXISTS ""SavingsAccountTransactions"" (
 	            ""SavingsAccountKey""	TEXT NOT NULL,
 	            ""ReportingPeriodKey""	TEXT NOT NULL,
 	            ""Change""	REAL NOT NULL,
 	            ""TransactionDate""	TEXT NOT NULL,
                 ""CountsToISALimit"" INT NULL,
                 ""BalanceAfterTransaction""	REAL NOT NULL,
-	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey"", ""CountsToISALimit""),
+	            PRIMARY KEY(""SavingsAccountKey"",""ReportingPeriodKey"", ""CountsToISALimit"", ""TransactionDate""),
 	            FOREIGN KEY(""ReportingPeriodKey"") REFERENCES ""ReportingPeriod""(""ReportingPeriodKey""),
 	            FOREIGN KEY(""SavingsAccountKey"") REFERENCES ""SavingsAccount""(""SavingsAccountKey"")
 )           ;";
 
-            newDb.Execute(reportingPeriodTable);
-            newDb.Execute(spendingCategoryTable);
-            newDb.Execute(savingsAccountTable);
-            newDb.Execute(spendingPlaceTable);
-            newDb.Execute(spendingTable);
-            newDb.Execute(savingsAccountTransactionTable);
-
-            newDb.Shutdown();
+            newDb.ExecuteNonQuery(reportingPeriodTable);
+            newDb.ExecuteNonQuery(spendingCategoryTable);
+            newDb.ExecuteNonQuery(savingsAccountTable);
+            newDb.ExecuteNonQuery(spendingPlaceTable);
+            newDb.ExecuteNonQuery(spendingTable);
+            newDb.ExecuteNonQuery(savingsAccountTransactionTable);
         }
     }
 }

@@ -4,10 +4,13 @@ namespace CommonClasses.Structure
     public class ReportingPeriod
     {
         public Guid ReportingPeriodKey { get; init; } = Guid.NewGuid();
-        public required DateTime StartDate {  get; init; }
-        public required DateTime EndDate { get; init; }
+
+        public required DateOnly StartDate {  get; init; }
+
+        public required DateOnly EndDate { get; init; }
 
         public List<SavingsTransaction> SavingsTransactionsThisPeriod { get; } = [];
+
         public List<Spending> SpendingTransactionsThisPeriod { get; } = [];
 
         public override bool Equals(object? obj)
@@ -29,12 +32,9 @@ namespace CommonClasses.Structure
 
         public override string ToString()
         {
-            var startDate = StartDate.ToString("dd/MM/yyyy");
-            var endDate = EndDate.ToString("dd/MM/yyyy");
+            var formattedEndDate = EndDate.ToString("yyyy-MM-dd");
 
-            var formattedDates = $"{startDate} - {endDate}";
-
-            return formattedDates;
+            return formattedEndDate;
         }
     }
 }

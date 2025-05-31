@@ -8,10 +8,8 @@ namespace SpendingAndSavingsMonthlyTracker
         private static readonly int NUMBER_OF_REPORTING_PERIODS = 13;
         private static readonly string TOTAL_NAME = "Total";
 
-        public static List<SpendingThisPeriod> GetSpendingThisPeriod(SpendingSavingsTracker tracker)
+        public static List<SpendingThisPeriod> GetSpendingThisPeriod(SpendingSavingsTracker tracker, ReportingPeriod currentReportingPeriod)
         {
-            var currentReportingPeriod = tracker.ReportingPeriods.OrderByDescending(x => x.EndDate).First();
-
             var spendingThisPeriod = currentReportingPeriod.SpendingTransactionsThisPeriod.Select(x =>
                 new SpendingThisPeriod()
                 {
@@ -39,6 +37,7 @@ namespace SpendingAndSavingsMonthlyTracker
                     continue;
                 }
 
+                // Summarise the transactions in the reporting period by spending category
                 var transactionsThisPeriod = reportingPeriod.SpendingTransactionsThisPeriod
                     .GroupBy(x => x.SpendingPlace.SpendingCategory.SpendingCategoryName, StringComparer.OrdinalIgnoreCase)
                     .Select(x => new SpendingOverTime() {
@@ -72,10 +71,11 @@ namespace SpendingAndSavingsMonthlyTracker
 
             foreach (var reportingPeriod in reportingPeriods)
             {
+                // Summarise all transactions by savings account
                 var transactionsThisPeriod = reportingPeriod.SavingsTransactionsThisPeriod
                     .GroupBy(x => x.SavingsAccount.SavingsAccountName, StringComparer.OrdinalIgnoreCase)
                     .Select(x => {
-                        var newestTransaction = x.OrderByDescending(x => x.TransactionDate).First();
+                        var newestTransaction = x.OrderByDescending(x => x.TransactionDate).MaxBy(x => x.BalanceAfterTransaction)!;
 
                         return new SavingsOverTime()
                         {
@@ -107,13 +107,13 @@ namespace SpendingAndSavingsMonthlyTracker
         {
             var mostRecentPeriod = tracker.ReportingPeriods.OrderByDescending(x => x.StartDate).First();
 
-            var startOfFinancialYear = DateTime.Parse($"06/04/{mostRecentPeriod.StartDate.Year}");
-            var endOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year + 1}");
+            var startOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year, 4, 6);
+            var endOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year + 1, 4, 5);
 
             if (startOfFinancialYear >= mostRecentPeriod.StartDate)
             {
-                startOfFinancialYear = DateTime.Parse($"06/04/{mostRecentPeriod.StartDate.Year - 1}");
-                endOfFinancialYear = DateTime.Parse($"05/04/{mostRecentPeriod.StartDate.Year}");
+                startOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year - 1, 4, 6);
+                endOfFinancialYear = new DateOnly(mostRecentPeriod.StartDate.Year, 4, 5);
             }
 
             var reportingPeriodsWithinFinancialYear = tracker.ReportingPeriods.Where(x => x.EndDate >= startOfFinancialYear && x.StartDate <= endOfFinancialYear)
@@ -125,7 +125,12 @@ namespace SpendingAndSavingsMonthlyTracker
 
             foreach(var reportingPeriod in reportingPeriodsWithinFinancialYear)
             {
-                var transactionsForReportingPeriod = reportingPeriod.SavingsTransactionsThisPeriod.Where(x => x.CountsToISALimit is not null && (bool) x.CountsToISALimit).ToList();
+                var transactionsForReportingPeriod = reportingPeriod.SavingsTransactionsThisPeriod.Where(x => 
+                x.CountsToISALimit is not null &&
+                x.TransactionDate >= startOfFinancialYear &&
+                x.TransactionDate <= endOfFinancialYear &&
+                (bool) x.CountsToISALimit).ToList();
+
                 var totalForTheMonth = transactionsForReportingPeriod.Select(x => Math.Abs(x.Change)).Sum();
 
                 totalIsaUsage += totalForTheMonth;
