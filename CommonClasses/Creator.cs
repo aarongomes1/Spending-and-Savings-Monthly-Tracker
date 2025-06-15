@@ -101,7 +101,8 @@ namespace CommonClasses
         {
             var existingTransaction = savingsAccount.Transactions.SingleOrDefault(x => x.ReportingPeriod.Equals(reportingPeriod)
             && x.Change == change
-            && x.CountsToISALimit == countsToIsaLimit);
+            && x.CountsToISALimit == countsToIsaLimit
+            && x.TransactionDate == transactionDate);
 
             if (existingTransaction is not null)
             {
