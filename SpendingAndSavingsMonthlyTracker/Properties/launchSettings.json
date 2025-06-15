@@ -15,6 +15,10 @@
     "Jan 2025": {
       "commandName": "Project",
       "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\\spending.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\\savings.csv\"\r\n\r\n\"27/12/2024\"\r\n\r\n\"27/01/2025\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\Config\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\CurrentMonth\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\Automated\\History\""
+    },
+    "May 2025": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\CurrentMonth\\spending.csv\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\CurrentMonth\\savings.csv\"\r\n\r\n\"28/04/2025\"\r\n\r\n\"27/05/2025\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\Config\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\CurrentMonth\"\r\n\r\n\"C:\\Users\\aaron\\Documents\\Finance\\SpendingSaverTracker\\History\""
     }
   }
 }
