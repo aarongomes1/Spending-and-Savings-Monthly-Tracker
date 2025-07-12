@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TransactionsToSpendingSavings": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\StatementTranslator\\barclays.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\StatementTranslator\\barclaycard.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\StatementTranslator\\SpendingMapping.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\StatementTranslator\\SavingsMapping.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\StatementTranslator\\Exclusions.csv\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\StatementTranslator\"\r\n"
+    }
+  }
+}
