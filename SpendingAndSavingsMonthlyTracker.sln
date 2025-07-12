@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SavingsInitialiser", "Savin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendingAndSavingsMonthlyTrackerTests", "SpendingAndSavingsMonthlyTrackerTests\SpendingAndSavingsMonthlyTrackerTests.csproj", "{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionsToSpendingSavings", "TransactionsToSpendingSavings\TransactionsToSpendingSavings.csproj", "{70021710-9B1B-49B9-8A74-4335A24AA8A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,8 +35,15 @@ Global
 		{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE1C7275-2DF8-4317-8675-B7E5A614A1E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70021710-9B1B-49B9-8A74-4335A24AA8A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70021710-9B1B-49B9-8A74-4335A24AA8A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70021710-9B1B-49B9-8A74-4335A24AA8A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70021710-9B1B-49B9-8A74-4335A24AA8A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9BDEE66C-2ACE-47DD-BEBB-6830AE3C60A9}
 	EndGlobalSection
 EndGlobal

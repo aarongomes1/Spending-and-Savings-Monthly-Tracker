@@ -33,7 +33,7 @@ namespace SpendingAndSavingsMonthlyTracker
             {
                 var isIsa = savingsRecord.IsISA is not null && (bool)savingsRecord.IsISA;
 
-                var savingsAccount = tracker.Creator.GetOrCreateSavingsAccount(savingsRecord.AccountName, isIsa);
+                var savingsAccount = tracker.Creator.GetOrCreateSavingsAccount(savingsRecord.AccountName.Trim(), isIsa);
                 savingsAccountsUsed.Add(savingsAccount);
 
                 // If the account we put money into is an ISA then we need to count this transaction towards the ISA limit
@@ -63,8 +63,8 @@ namespace SpendingAndSavingsMonthlyTracker
             {
                 var amountChanged = spendingRecord.Debit ?? spendingRecord.Refund ?? throw new Exception("Spending record has blank amount");
 
-                var spendingCategory = tracker.Creator.GetOrCreateSpendingCategory(spendingRecord.Category);
-                var spendingPlace = tracker.Creator.GetOrCreateSpendingPlace(spendingRecord.Name, spendingCategory);
+                var spendingCategory = tracker.Creator.GetOrCreateSpendingCategory(spendingRecord.Category.Trim());
+                var spendingPlace = tracker.Creator.GetOrCreateSpendingPlace(spendingRecord.Name.Trim(), spendingCategory);
 
                 tracker.Creator.GetOrCreateSpendingTransaction(spendingPlace, reportingPeriod, amountChanged);
             }
