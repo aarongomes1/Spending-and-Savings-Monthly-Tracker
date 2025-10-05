@@ -39,7 +39,8 @@ namespace TransactionsToSpendingSavings
 
             (var mappedSpending, var unmappedSpending) = SpendingMapper.TranslateSpending(barclaycardRecordsWithoutExcluded, 
                     barclaysRecordsWithoutExcluded, spendingMappingRecords);
-            (var mappedSavings, var unmappedSavings) = SavingsMapper.TranslateSavings(barclaysRecordsWithoutExcluded, savingsMappingRecords);
+            (var mappedSavings, var unmappedSavings) = SavingsMapper.TranslateSavings(barclaysRecordsWithoutExcluded,
+                barclaycardRecordsWithoutExcluded, savingsMappingRecords);
 
             // Only the records that weren't in both savings and spending need to be output as unmapped
             var unmappedRecords = unmappedSpending.Intersect(unmappedSavings).ToList();
