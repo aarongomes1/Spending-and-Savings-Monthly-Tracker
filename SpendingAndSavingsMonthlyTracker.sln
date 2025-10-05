@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendingAndSavingsMonthlyTr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionsToSpendingSavings", "TransactionsToSpendingSavings\TransactionsToSpendingSavings.csproj", "{70021710-9B1B-49B9-8A74-4335A24AA8A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{70021710-9B1B-49B9-8A74-4335A24AA8A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70021710-9B1B-49B9-8A74-4335A24AA8A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70021710-9B1B-49B9-8A74-4335A24AA8A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

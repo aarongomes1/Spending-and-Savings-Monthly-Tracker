@@ -6,6 +6,7 @@ namespace TransactionsToSpendingSavings.Mappers
     {
         public static (List<SavingsInput> MappedTransactions, List<Unmapped> Unmapped) TranslateSavings(
             List<Barclays> barclaysTransactions,
+            List<Barclaycard> barclaycardTransactions,
             List<SavingsMapping> savingsMapping)
         {
             var outputRecords = new List<SavingsInput>();
@@ -35,6 +36,20 @@ namespace TransactionsToSpendingSavings.Mappers
                         TransactionName = transaction.Memo,
                         Amount = Math.Abs(decimal.Parse(transaction.Amount)),
                         Account = "Barclays",
+                    };
+
+                    unusedMappings.Add(unmappedRecord);
+                }
+
+                barclaycardTransactions = barclaycardTransactions.Where(x => x.Credit is not null).ToList();
+
+                foreach (var unmappedBarclaycard in barclaycardTransactions)
+                {
+                    var unmappedRecord = new Unmapped
+                    {
+                        TransactionName = unmappedBarclaycard.Name,
+                        Amount = (decimal) unmappedBarclaycard.Credit!,
+                        Account = "Barclaycard",
                     };
 
                     unusedMappings.Add(unmappedRecord);
