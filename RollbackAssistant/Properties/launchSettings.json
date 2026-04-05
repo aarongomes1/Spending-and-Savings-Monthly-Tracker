@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RollbackAssistant": {
+      "commandName": "Project",
+      "commandLineArgs": "\"25/09/2025\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\RollBack\\CurrentMonth\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\RollBack\\History\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\RollBack\\Config\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\RollBack\\Backup\"\r\n\r\n\"C:\\temp\\Spending-and-Savings-Monthly-Tracker\\RollBack\\Executables\\SpendingAndSavingsMonthlyTracker.exe\""
+    }
+  }
+}

@@ -7,7 +7,7 @@ namespace SpendingAndSavingsMonthlyTracker
 {
     internal class Normaliser
     {
-        public static void Normalise(
+        public static ReportingPeriod Normalise(
             SpendingSavingsTracker tracker,
             List<SavingsInput> savingsRecords,
             List<SpendingInput> spendingRecords,
@@ -16,13 +16,17 @@ namespace SpendingAndSavingsMonthlyTracker
         {
             var reportingPeriod = tracker.Creator.GetOrCreateReportingPeriod(startDate, endDate);
 
-            NormaliseSavings(tracker, savingsRecords, reportingPeriod);
+            NormaliseSavings(tracker, savingsRecords, reportingPeriod, startDate, endDate);
             NormaliseSpending(tracker, spendingRecords, reportingPeriod);
+
+            return reportingPeriod;
         }
 
         private static void NormaliseSavings(SpendingSavingsTracker tracker,
             List<SavingsInput> savingsRecords,
-            ReportingPeriod reportingPeriod)
+            ReportingPeriod reportingPeriod,
+            DateOnly startDate,
+            DateOnly endDate)
         {
             var savingsAccountsUsed = new List<SavingsAccount>();
 
@@ -40,6 +44,13 @@ namespace SpendingAndSavingsMonthlyTracker
                 var countsToIsaLimit = savingsRecord.BalanceCountsToISALimit is not null && (bool)savingsRecord.BalanceCountsToISALimit;
 
                 var transactionDate = DateOnly.ParseExact(savingsRecord.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+                // A transaction has to be within the start and end dates
+                // This is to prevent the use of another preiods savings transactions in the current period
+                if (transactionDate < startDate || transactionDate > endDate)
+                {
+                    throw new InvalidDataException($"Transaction date: {transactionDate} doesn't lie within start/end dates {startDate.ToString()}, {endDate.ToString()}");
+                }
 
                 tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, savingsRecord.Deposit, transactionDate, countsToIsaLimit);
             }
