@@ -42,7 +42,7 @@ namespace SavingsInitialiser
         }
 
         private static void CopyFileToHistory(string filePath, string historyFolderPath, DateOnly date)
-        {
+                {
             var fileToCopy = Path.GetFileName(filePath);
 
             var year = date.ToString("yyyy");
@@ -53,7 +53,7 @@ namespace SavingsInitialiser
 
             var directory = Path.GetDirectoryName(outputFilePath)!;
             if (!Path.Exists(directory))
-            {
+                {
                 Directory.CreateDirectory(directory);
             }
 
