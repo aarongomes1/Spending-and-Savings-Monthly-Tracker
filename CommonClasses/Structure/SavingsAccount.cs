@@ -13,8 +13,6 @@ namespace CommonClasses.Structure
 
         public required bool IsISA { get; init; }
 
-        public required bool IsISA { get; init; }
-
         public override bool Equals(object? obj)
         {
             if (obj is null || obj.GetType() != typeof(SavingsAccount))

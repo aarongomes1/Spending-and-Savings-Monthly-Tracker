@@ -25,10 +25,10 @@ namespace SpendingAndSavingsMonthlyTracker
         public static List<SpendingOverTime> GetSpendingOverTime(SpendingSavingsTracker tracker)
         {
             var reportingPeriods = tracker.ReportingPeriods.OrderByDescending(x => x.EndDate).Take(NUMBER_OF_REPORTING_PERIODS).OrderBy(x => x.EndDate);
-            
+
             var spendingOverTime = new List<SpendingOverTime>();
 
-            foreach(var reportingPeriod in reportingPeriods)
+            foreach (var reportingPeriod in reportingPeriods)
             {
                 // Remove the initial reporting period from spending over time
                 if (reportingPeriod.StartDate.Day == 6 && reportingPeriod.StartDate.Month == 4
@@ -59,7 +59,6 @@ namespace SpendingAndSavingsMonthlyTracker
                 spendingOverTime.Add(totalSpendingPerReportingPeriod);
             }
 
-
             return spendingOverTime;
         }
 
@@ -77,10 +76,10 @@ namespace SpendingAndSavingsMonthlyTracker
                     .Select(x => {
                         var newestTransaction = x.OrderByDescending(x => x.TransactionDate).MaxBy(x => x.BalanceAfterTransaction)!;
 
-                        return new SavingsOverTime()
-                    {
-                        ReportingPeriod = reportingPeriod.ToString(),
-                        Account = x.Key,
+                        return new SavingsOverTime
+                        {
+                            ReportingPeriod = reportingPeriod.ToString(),
+                            Account = x.Key,
                             AmountAdded = newestTransaction.BalanceAfterTransaction,
                         };
                     });
@@ -89,17 +88,7 @@ namespace SpendingAndSavingsMonthlyTracker
 
                 var total = transactionsThisPeriod.Select(x => x.AmountAdded).Sum();
 
-                var totalSavingsPerReportingPeriod = new SavingsOverTime()
-                {
-                    Account = TOTAL_NAME,
-                    AmountAdded = total,
-                    ReportingPeriod = reportingPeriod.ToString(),
-                };
-
-                spendingOverTime.Add(totalSavingsPerReportingPeriod);
-            }
-
-                var totalSavingsPerReportingPeriod = new SavingsOverTime()
+                var totalSavingsPerReportingPeriod = new SavingsOverTime
                 {
                     Account = TOTAL_NAME,
                     AmountAdded = total,
