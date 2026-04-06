@@ -46,7 +46,7 @@ namespace SpendingAndSavingsMonthlyTracker
                 var transactionDate = DateOnly.ParseExact(savingsRecord.TransactionDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                 // A transaction has to be within the start and end dates
-                // This is to prevent the use of another preiods savings transactions in the current period
+                // This is to prevent the use of another periods savings transactions in the current period
                 if (transactionDate < startDate || transactionDate > endDate)
                 {
                     throw new InvalidDataException($"Transaction date: {transactionDate} doesn't lie within start/end dates {startDate.ToString()}, {endDate.ToString()}");

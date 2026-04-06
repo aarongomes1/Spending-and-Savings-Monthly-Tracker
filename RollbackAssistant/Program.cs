@@ -4,9 +4,9 @@ namespace RollbackAssistant
 {
     internal class Program
     {
-        private const string DB_FILE_NAME = "output_db.db";
-        private const string SPENDING_FILE_NAME = "spending.csv";
-        private const string SAVINGS_FILE_NAME = "savings.csv";
+        private const string DbFileName = "output_db.db";
+        private const string SpendingFileName = "spending.csv";
+        private const string SavingsFileName = "savings.csv";
 
         static void Main(string[] args)
         {
@@ -35,18 +35,18 @@ namespace RollbackAssistant
 
             Console.WriteLine($"Saved previous history as {zipFilePath}");
 
-            var dates = FileUtils.ConstructDatesFromHistory(historyFolderPath, rollbackDate);
-
             Console.WriteLine("Resetting db to restore point");
 
-            var dbFilePath = Path.Combine(currentMonthFolderPath, DB_FILE_NAME);
+            var dbFilePath = Path.Combine(currentMonthFolderPath, DbFileName);
 
             FileUtils.DeleteIfExists(dbFilePath);
 
             var dateHistoryFolderPath = FileUtils.BuildDatePath(historyFolderPath, rollbackDate);
-            var oldDbFilePath = Path.Combine(dateHistoryFolderPath, DB_FILE_NAME);
+            var oldDbFilePath = Path.Combine(dateHistoryFolderPath, DbFileName);
 
             File.Copy(oldDbFilePath, dbFilePath);
+
+            var dates = FileUtils.ConstructDatesFromHistory(historyFolderPath, rollbackDate);
 
             Console.WriteLine($"Identified {dates.Count} reporting dates to reapply");
 
@@ -67,11 +67,11 @@ namespace RollbackAssistant
         {
             var dateHistoryFolderPath = FileUtils.BuildDatePath(historyFolderPath, dateToExecute);
 
-            var spendingHistoryFilePath = Path.Combine(dateHistoryFolderPath, SPENDING_FILE_NAME);
-            var savingsHistoryFilePath = Path.Combine(dateHistoryFolderPath, SAVINGS_FILE_NAME);
+            var spendingHistoryFilePath = Path.Combine(dateHistoryFolderPath, SpendingFileName);
+            var savingsHistoryFilePath = Path.Combine(dateHistoryFolderPath, SavingsFileName);
 
-            var newSpendingFilePath = Path.Combine(currentMonthFolderPath, SPENDING_FILE_NAME);
-            var newSavingsFilePath = Path.Combine(currentMonthFolderPath, SAVINGS_FILE_NAME);
+            var newSpendingFilePath = Path.Combine(currentMonthFolderPath, SpendingFileName);
+            var newSavingsFilePath = Path.Combine(currentMonthFolderPath, SavingsFileName);
 
             FileUtils.DeleteIfExists(newSpendingFilePath);
             FileUtils.DeleteIfExists(newSavingsFilePath);

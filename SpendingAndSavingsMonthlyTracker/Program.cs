@@ -6,12 +6,12 @@ namespace SpendingAndSavingsMonthlyTracker
 {
     internal class Program
     {
-        private const string LICENCE_FILE_NAME = "license.txt";
-        private const string REPORT_FILE_NAME = "report.xlsx";
-        private const string DB_FILE_NAME = "output_db.db";
-        private const string TEMPLATE_FILE_NAME = "template.xlsx";
-        private const string SPENDING_FILE_NAME = "spending.csv";
-        private const string SAVINGS_FILE_NAME = "savings.csv";
+        private const string LicenceFileName = "license.txt";
+        private const string ReportFileName = "report.xlsx";
+        private const string DbFileName = "output_db.db";
+        private const string TemplateFileName = "template.xlsx";
+        private const string SpendingFileName = "spending.csv";
+        private const string SavingsFileName = "savings.csv";
 
         static void Main(string[] args)
         {
@@ -30,17 +30,17 @@ namespace SpendingAndSavingsMonthlyTracker
             var currentReportFolderPath = args[2];
             var historyFolderPath = args[3];
 
-            var syncfusionLicenseFilePath = Path.Combine(configFolderPath, LICENCE_FILE_NAME);
+            var syncfusionLicenseFilePath = Path.Combine(configFolderPath, LicenceFileName);
             var license = File.ReadAllLines(syncfusionLicenseFilePath).Single();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(license);
 
-            var spendingFilePath = Path.Combine(currentReportFolderPath, SPENDING_FILE_NAME);
-            var savingsFilePath = Path.Combine(currentReportFolderPath, SAVINGS_FILE_NAME);
+            var spendingFilePath = Path.Combine(currentReportFolderPath, SpendingFileName);
+            var savingsFilePath = Path.Combine(currentReportFolderPath, SavingsFileName);
 
             var spendingRecords = IO.ReadRecords<SpendingInput>(spendingFilePath);
             var savingsRecords = IO.ReadRecords<SavingsInput>(savingsFilePath);
 
-            var previousReportDbFilePath = Path.Combine(currentReportFolderPath, DB_FILE_NAME);
+            var previousReportDbFilePath = Path.Combine(currentReportFolderPath, DbFileName);
 
             // If we have a previous month's run then load it in, if not then just create an empty models object
             var tracker = File.Exists(previousReportDbFilePath) ?
@@ -64,8 +64,8 @@ namespace SpendingAndSavingsMonthlyTracker
 
             var newReportingPeriod = Normaliser.Normalise(tracker, savingsRecords, spendingRecords, startDate, endDate);
 
-            var dbFilePath = Path.Combine(currentReportFolderPath, DB_FILE_NAME);
-            var xlsxFilePath = Path.Combine(currentReportFolderPath, REPORT_FILE_NAME);
+            var dbFilePath = Path.Combine(currentReportFolderPath, DbFileName);
+            var xlsxFilePath = Path.Combine(currentReportFolderPath, ReportFileName);
 
             // Save the completed models object to the db 
             tracker.Save(dbFilePath);
@@ -76,7 +76,7 @@ namespace SpendingAndSavingsMonthlyTracker
             var savingsOverTime = StatsExtractor.GetSavingsOverTime(tracker);
             var isaUsage = StatsExtractor.GetISAUsageOverTime(tracker);
 
-            var templateFilePath = Path.Combine(configFolderPath, TEMPLATE_FILE_NAME);
+            var templateFilePath = Path.Combine(configFolderPath, TemplateFileName);
 
             XlsxDataInsertion.PopulateTemplate(templateFilePath, savingsOverTime, spendingOverTime, spendingThisPeriod, isaUsage, xlsxFilePath);
 
