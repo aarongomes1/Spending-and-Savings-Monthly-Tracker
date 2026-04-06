@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionsToSpendingSavin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RollbackAssistant", "RollbackAssistant\RollbackAssistant.csproj", "{0E5096F1-0F85-4138-9261-AF4EC2108B01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3385BDA6-BAFB-4F8D-8716-A020A89A24A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E5096F1-0F85-4138-9261-AF4EC2108B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E5096F1-0F85-4138-9261-AF4EC2108B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E5096F1-0F85-4138-9261-AF4EC2108B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E5096F1-0F85-4138-9261-AF4EC2108B01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

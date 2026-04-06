@@ -6,78 +6,77 @@ namespace SpendingAndSavingsMonthlyTracker
 {
     internal class Program
     {
-        private const string LICENCE_FILE = "license.txt";
-        private const string REPORT_FILE = "report.xlsx";
-        private const string DB_FILE = "output_db.db";
-        private const string TEMPLATE_FILE = "template.xlsx";
+        private const string LicenceFileName = "license.txt";
+        private const string ReportFileName = "report.xlsx";
+        private const string DbFileName = "output_db.db";
+        private const string TemplateFileName = "template.xlsx";
+        private const string SpendingFileName = "spending.csv";
+        private const string SavingsFileName = "savings.csv";
 
         static void Main(string[] args)
         {
-            if (args.Length != 7)
+            if (args.Length != 4)
             {
-                Console.WriteLine("Expected 7 parameters");
-                Console.WriteLine("1) Path to the spending CSV file");
-                Console.WriteLine("2) Path to the saving CSV file");
-                Console.WriteLine("3) Reporting start date (DD/MM/YYYY)");
-                Console.WriteLine("4) Reporting end date (DD/MM/YYYY)");
-                Console.WriteLine("5) Path to the config folder");
-                Console.WriteLine("6) Path to the current report folder");
-                Console.WriteLine("7) Path to the history report folder");
+                Console.WriteLine("Expected 4 parameters");
+                Console.WriteLine("1) Reporting end date (DD/MM/YYYY)");
+                Console.WriteLine("2) Path to the config folder");
+                Console.WriteLine("3) Path to the current report folder");
+                Console.WriteLine("4) Path to the history report folder");
                 return;
             }
 
-            var spendingFilePath = args[0];
-            var savingsFilePath = args[1];
-            var startDate = DateOnly.ParseExact(args[2], "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            var endDate = DateOnly.ParseExact(args[3], "dd/MM/yyyy", CultureInfo.InvariantCulture);
-            var configFolderPath = args[4];
-            var currentReportFolderPath = args[5];
-            var historyFolderPath = args[6];
+            var endDate = DateOnly.ParseExact(args[0], "dd/MM/yyyy", CultureInfo.InvariantCulture);
+            var configFolderPath = args[1];
+            var currentReportFolderPath = args[2];
+            var historyFolderPath = args[3];
 
-            var syncfusionLicenseFilePath = Path.Combine(configFolderPath, LICENCE_FILE);
+            var syncfusionLicenseFilePath = Path.Combine(configFolderPath, LicenceFileName);
             var license = File.ReadAllLines(syncfusionLicenseFilePath).Single();
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(license);
+
+            var spendingFilePath = Path.Combine(currentReportFolderPath, SpendingFileName);
+            var savingsFilePath = Path.Combine(currentReportFolderPath, SavingsFileName);
 
             var spendingRecords = IO.ReadRecords<SpendingInput>(spendingFilePath);
             var savingsRecords = IO.ReadRecords<SavingsInput>(savingsFilePath);
 
-            var previousReportDbFilePath = Path.Combine(currentReportFolderPath, DB_FILE);
+            var previousReportDbFilePath = Path.Combine(currentReportFolderPath, DbFileName);
 
-            SpendingSavingsTracker tracker;
-            
             // If we have a previous month's run then load it in, if not then just create an empty models object
-            if (File.Exists(previousReportDbFilePath))
-            {
-                tracker = SpendingSavingsTracker.Load(previousReportDbFilePath);
-            }
-            else
-            {
-                tracker = SpendingSavingsTracker.InitialiseEmpty();
-            }
+            var tracker = File.Exists(previousReportDbFilePath) ?
+                SpendingSavingsTracker.Load(previousReportDbFilePath) : 
+                SpendingSavingsTracker.InitialiseEmpty();
 
-            var matchingReportingPeriod = tracker.ReportingPeriods.SingleOrDefault(x => x.StartDate == startDate && x.EndDate == endDate);
-            if (matchingReportingPeriod is not null)
+            var previousReportingPeriod = tracker.ReportingPeriods.OrderBy(x => x.EndDate).Last();
+
+            if (previousReportingPeriod.EndDate >= endDate)
             {
                 throw new ArgumentException("Reporting month already processed");
             }
 
-            Normaliser.Normalise(tracker, savingsRecords, spendingRecords, startDate, endDate);
+            var startDate = previousReportingPeriod.EndDate.AddDays(1);
 
-            matchingReportingPeriod = tracker.ReportingPeriods.Single(x => x.StartDate == startDate && x.EndDate == endDate);
+            // To prevent accidently using old db file, we'll restrict the reporting period length to 40 days or less
+            if (previousReportingPeriod.EndDate.AddDays(40) < startDate)
+            {
+                throw new ArgumentException("End date is more than 40 day from the previous end date");
+            }
 
-            var dbFilePath = Path.Combine(currentReportFolderPath, DB_FILE);
-            var xlsxFilePath = Path.Combine(currentReportFolderPath, REPORT_FILE);
+            var newReportingPeriod = Normaliser.Normalise(tracker, savingsRecords, spendingRecords, startDate, endDate);
+
+            var dbFilePath = Path.Combine(currentReportFolderPath, DbFileName);
+            var xlsxFilePath = Path.Combine(currentReportFolderPath, ReportFileName);
 
             // Save the completed models object to the db 
             tracker.Save(dbFilePath);
 
             // Calculate the various stats
             var spendingOverTime = StatsExtractor.GetSpendingOverTime(tracker);
-            var spendingThisPeriod = StatsExtractor.GetSpendingThisPeriod(tracker, matchingReportingPeriod!);
+            var spendingThisPeriod = StatsExtractor.GetSpendingThisPeriod(tracker, newReportingPeriod);
             var savingsOverTime = StatsExtractor.GetSavingsOverTime(tracker);
             var isaUsage = StatsExtractor.GetISAUsageOverTime(tracker);
 
-            var templateFilePath = Path.Combine(configFolderPath, TEMPLATE_FILE);
+            var templateFilePath = Path.Combine(configFolderPath, TemplateFileName);
 
             XlsxDataInsertion.PopulateTemplate(templateFilePath, savingsOverTime, spendingOverTime, spendingThisPeriod, isaUsage, xlsxFilePath);
 
