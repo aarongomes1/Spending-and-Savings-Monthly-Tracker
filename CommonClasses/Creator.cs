@@ -93,7 +93,7 @@ namespace CommonClasses
             return newSavingsAccount;
         }
 
-        public SavingsTransaction GetOrCreateSavingsTransaction(SavingsAccount savingsAccount,
+        public static SavingsTransaction GetOrCreateSavingsTransaction(SavingsAccount savingsAccount,
             ReportingPeriod reportingPeriod,
             decimal change,
             DateOnly transactionDate,
@@ -128,19 +128,37 @@ namespace CommonClasses
             return newTransaction;
         }
 
-        public Spending GetOrCreateSpendingTransaction(SpendingPlace spendingPlace, ReportingPeriod reportingPeriod, decimal amount)
+        public static Spending GetOrCreateSpendingTransaction(
+            SpendingPlace spendingPlace,
+            ReportingPeriod reportingPeriod,
+            decimal amount,
+            bool isRefund
+            )
         {
+            if (isRefund)
+            {
+                // If we have a refund we want to subtract from the total spend rather than add to it.
+                // We will still count a refund as a 'visit' or a transaction because we may not know which reporting period applies to.
+                // If the refund is within the last reporting period then we may try and incorrectly cancel a transaction in this one
+                // which will lead to inaccurate figures.
+                amount = 0 - Math.Abs(amount);
+            }
+            else if (amount < 0)
+            {
+                throw new ArgumentException("Debit amounts can't be < 0");
+            }
+
             var existingTransaction = spendingPlace.SpendingCategory.Transactions.SingleOrDefault(x => x.SpendingPlace.Equals(spendingPlace) && x.ReportingPeriod.Equals(reportingPeriod));
 
             if (existingTransaction is not null)
             {
-                existingTransaction.NumberOfTransactions++;
+                existingTransaction.NumberOfTransactions++; 
                 existingTransaction.Amount += amount;
 
                 return existingTransaction;
             }
 
-            var newTransaction = new Spending()
+            var newTransaction = new Spending
             {
                 ReportingPeriod = reportingPeriod,
                 SpendingPlace = spendingPlace,

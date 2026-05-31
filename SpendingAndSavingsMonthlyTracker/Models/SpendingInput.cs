@@ -1,4 +1,6 @@
-﻿
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("SpendingAndSavingsMonthlyTrackerTests")]
 namespace SpendingAndSavingsMonthlyTracker.Models
 {
     internal class SpendingInput

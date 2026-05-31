@@ -8,7 +8,7 @@ namespace SpendingAndSavingsMonthlyTracker
         private static readonly int NUMBER_OF_REPORTING_PERIODS = 13;
         private static readonly string TOTAL_NAME = "Total";
 
-        public static List<SpendingThisPeriod> GetSpendingThisPeriod(SpendingSavingsTracker tracker, ReportingPeriod currentReportingPeriod)
+        public static List<SpendingThisPeriod> GetSpendingThisPeriod(ReportingPeriod currentReportingPeriod)
         {
             var spendingThisPeriod = currentReportingPeriod.SpendingTransactionsThisPeriod.Select(x =>
                 new SpendingThisPeriod()
