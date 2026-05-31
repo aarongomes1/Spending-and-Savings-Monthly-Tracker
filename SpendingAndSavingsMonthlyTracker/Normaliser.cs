@@ -1,8 +1,12 @@
 ﻿
+using CommonClasses;
 using CommonClasses.Structure;
 using SpendingAndSavingsMonthlyTracker.Models;
+using Syncfusion.XlsIO.Implementation;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("SpendingAndSavingsMonthlyTrackerTests")]
 namespace SpendingAndSavingsMonthlyTracker
 {
     internal class Normaliser
@@ -22,7 +26,7 @@ namespace SpendingAndSavingsMonthlyTracker
             return reportingPeriod;
         }
 
-        private static void NormaliseSavings(SpendingSavingsTracker tracker,
+        internal static void NormaliseSavings(SpendingSavingsTracker tracker,
             List<SavingsInput> savingsRecords,
             ReportingPeriod reportingPeriod,
             DateOnly startDate,
@@ -52,7 +56,7 @@ namespace SpendingAndSavingsMonthlyTracker
                     throw new InvalidDataException($"Transaction date: {transactionDate} doesn't lie within start/end dates {startDate.ToString()}, {endDate.ToString()}");
                 }
 
-                tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, savingsRecord.Deposit, transactionDate, countsToIsaLimit);
+                Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, savingsRecord.Deposit, transactionDate, countsToIsaLimit);
             }
 
             // For the savings accounts that weren't added to set the transaction to 0
@@ -60,24 +64,30 @@ namespace SpendingAndSavingsMonthlyTracker
             {
                 if (!savingsAccountsUsed.Contains(savingsAccount))
                 {
-                    tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, 0, reportingPeriod.StartDate, savingsAccount.IsISA);
+                    Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, 0, reportingPeriod.StartDate, savingsAccount.IsISA);
                 }
             }
         }
 
-        private static void NormaliseSpending(SpendingSavingsTracker tracker,
+        internal static void NormaliseSpending(SpendingSavingsTracker tracker,
             List<SpendingInput> spendingRecords,
             ReportingPeriod reportingPeriod)
         {
             // Zip through all the spending records and translate into the model
             foreach (var spendingRecord in spendingRecords)
             {
-                var amountChanged = spendingRecord.Debit ?? spendingRecord.Refund ?? throw new Exception("Spending record has blank amount");
+                if (spendingRecord.Debit is not null && spendingRecord.Refund is not null)
+                {
+                    throw new InvalidDataException($"Spending record of {spendingRecord.Name} cannot have both a debit and a refund");
+                }
+
+                var amountChanged = spendingRecord.Debit ?? spendingRecord.Refund ?? throw new InvalidDataException($"Spending record {spendingRecord.Name} has blank amount");
+                var isRefund = spendingRecord.Refund is not null;
 
                 var spendingCategory = tracker.Creator.GetOrCreateSpendingCategory(spendingRecord.Category.Trim());
                 var spendingPlace = tracker.Creator.GetOrCreateSpendingPlace(spendingRecord.Name.Trim(), spendingCategory);
 
-                tracker.Creator.GetOrCreateSpendingTransaction(spendingPlace, reportingPeriod, amountChanged);
+                Creator.GetOrCreateSpendingTransaction(spendingPlace, reportingPeriod, amountChanged, isRefund);
             }
         }
     }

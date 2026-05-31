@@ -24,12 +24,12 @@ namespace SavingsInitialiser
                 }
 
                 // Create a transaction at the start of the financial year with the amount from previous years
-                tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, balance, startOfFinancialYear, false);
+                CommonClasses.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, balance, startOfFinancialYear, false);
 
                 // Create an extra transaction with the ISA usage for the year
                 if (record.ISAUsageUsed is not null)
                 {
-                    tracker.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, (decimal)record.ISAUsageUsed, startOfFinancialYear, true);
+                    CommonClasses.Creator.GetOrCreateSavingsTransaction(savingsAccount, reportingPeriod, (decimal)record.ISAUsageUsed, startOfFinancialYear, true);
                 }
             }
         }
